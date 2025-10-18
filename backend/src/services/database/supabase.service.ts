@@ -1,7 +1,7 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 export class SupabaseService {
-  private static client: SupabaseClient;
+  private static _client: SupabaseClient | null = null;
 
   static initialize() {
     const supabaseUrl = process.env.SUPABASE_URL;
@@ -11,13 +11,17 @@ export class SupabaseService {
       throw new Error('Supabase credentials are not set');
     }
 
-    this.client = createClient(supabaseUrl, supabaseKey);
+    this._client = createClient(supabaseUrl, supabaseKey);
+  }
+
+  static get client(): SupabaseClient {
+    if (!this._client) {
+      this.initialize();
+    }
+    return this._client!;
   }
 
   static getClient(): SupabaseClient {
-    if (!this.client) {
-      this.initialize();
-    }
     return this.client;
   }
 
@@ -66,7 +70,4 @@ export class SupabaseService {
     throw new Error('Not implemented');
   }
 }
-
-// Initialize on module load
-SupabaseService.initialize();
 
