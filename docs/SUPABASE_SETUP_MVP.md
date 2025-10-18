@@ -112,7 +112,6 @@ CREATE TABLE submissions (
   overall_score DECIMAL(5,2),
   feedback JSONB,
   total_points INTEGER DEFAULT 0,
-  
   submitted_at TIMESTAMPTZ DEFAULT NOW()
 );
 

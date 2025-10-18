@@ -1,8 +1,8 @@
 import { apiClient } from './api.client';
-import { Story, StoryGenerationRequest } from '@shared/types';
+import { Story, StoryGenerationRequest, StoryGenerationResponse } from '@shared/types';
 
 export const storyApi = {
-  async generateStory(data: StoryGenerationRequest): Promise<Story> {
+  async generateStory(data: StoryGenerationRequest): Promise<StoryGenerationResponse> {
     return apiClient.post('/stories/generate', data);
   },
 
