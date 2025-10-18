@@ -20,81 +20,121 @@ export class StoryService {
       const sentenceCount = generatedStory.sentences.length;
       const estimatedDuration = Math.ceil(sentenceCount * 1.5); // 1.5 minutes per sentence
       
-      // 3. Save story to database
-      const { data: storyData, error: storyError } = await SupabaseService.client
-        .from('stories')
-        .insert({
+      // Database is now set up - enable persistence
+      const USE_DATABASE = true;
+      
+      if (USE_DATABASE) {
+        // 3. Save story to database
+        const { data: storyData, error: storyError } = await SupabaseService.client
+          .from('stories')
+          .insert({
+            title: generatedStory.title,
+            language: params.language,
+            level: params.level,
+            theme: params.theme || StoryTheme.ADVENTURE,
+            age_min: params.ageRange?.min,
+            age_max: params.ageRange?.max,
+            estimated_duration: estimatedDuration,
+          })
+          .select()
+          .single();
+        
+        if (storyError || !storyData) {
+          throw new Error(`Failed to save story: ${storyError?.message}`);
+        }
+        
+        // 4. Save sentences to database
+        const sentences = generatedStory.sentences.map((sentence, index) => ({
+          story_id: storyData.id,
+          order_index: index,
+          text_original: sentence.textOriginal,
+          text_translated: sentence.textTranslated,
+        }));
+        
+        const { data: sentencesData, error: sentencesError } = await SupabaseService.client
+          .from('story_sentences')
+          .insert(sentences)
+          .select();
+        
+        if (sentencesError || !sentencesData) {
+          // Rollback: delete the story if sentences failed
+          await SupabaseService.client
+            .from('stories')
+            .delete()
+            .eq('id', storyData.id);
+          
+          throw new Error(`Failed to save sentences: ${sentencesError?.message}`);
+        }
+        
+        // 5. Format and return the response
+        const story: Story = {
+          id: storyData.id,
+          title: storyData.title,
+          language: storyData.language,
+          level: storyData.level,
+          theme: storyData.theme,
+          ageRange: {
+            min: storyData.age_min || 6,
+            max: storyData.age_max || 12,
+          },
+          estimatedDuration: storyData.estimated_duration,
+          createdAt: new Date(storyData.created_at),
+          sentences: sentencesData.map((s: any) => ({
+            id: s.id,
+            storyId: s.story_id,
+            orderIndex: s.order_index,
+            textOriginal: s.text_original,
+            textTranslated: s.text_translated,
+            audioUrl: s.audio_url,
+            imageUrl: s.image_url,
+          })),
+        };
+        
+        const generationTime = Date.now() - startTime;
+        
+        return {
+          story,
+          metadata: {
+            generationTime,
+            modelUsed: 'gemini-2.5-flash',
+          },
+        };
+      } else {
+        // Return story without database persistence (temporary for testing)
+        console.log('⚠️  Database disabled - story not persisted');
+        const story: Story = {
+          id: `temp-${Date.now()}`, // Temporary ID
           title: generatedStory.title,
           language: params.language,
           level: params.level,
           theme: params.theme || StoryTheme.ADVENTURE,
-          age_min: params.ageRange?.min,
-          age_max: params.ageRange?.max,
-          estimated_duration: estimatedDuration,
-        })
-        .select()
-        .single();
-      
-      if (storyError || !storyData) {
-        throw new Error(`Failed to save story: ${storyError?.message}`);
-      }
-      
-      // 4. Save sentences to database
-      const sentences = generatedStory.sentences.map((sentence, index) => ({
-        story_id: storyData.id,
-        order_index: index,
-        text_original: sentence.textOriginal,
-        text_translated: sentence.textTranslated,
-      }));
-      
-      const { data: sentencesData, error: sentencesError } = await SupabaseService.client
-        .from('story_sentences')
-        .insert(sentences)
-        .select();
-      
-      if (sentencesError || !sentencesData) {
-        // Rollback: delete the story if sentences failed
-        await SupabaseService.client
-          .from('stories')
-          .delete()
-          .eq('id', storyData.id);
+          ageRange: {
+            min: params.ageRange?.min || 6,
+            max: params.ageRange?.max || 12,
+          },
+          estimatedDuration: estimatedDuration,
+          createdAt: new Date(),
+          sentences: generatedStory.sentences.map((s, index) => ({
+            id: `temp-sentence-${index}`,
+            storyId: `temp-${Date.now()}`,
+            orderIndex: index,
+            textOriginal: s.textOriginal,
+            textTranslated: s.textTranslated,
+            audioUrl: undefined,
+            imageUrl: undefined,
+          })),
+        };
         
-        throw new Error(`Failed to save sentences: ${sentencesError?.message}`);
+        const generationTime = Date.now() - startTime;
+        
+        return {
+          story,
+          metadata: {
+            generationTime,
+            modelUsed: 'gemini-2.5-flash',
+          },
+        };
       }
-      
-      // 5. Format and return the response
-      const story: Story = {
-        id: storyData.id,
-        title: storyData.title,
-        language: storyData.language,
-        level: storyData.level,
-        theme: storyData.theme,
-        ageRange: {
-          min: storyData.age_min || 6,
-          max: storyData.age_max || 12,
-        },
-        estimatedDuration: storyData.estimated_duration,
-        createdAt: new Date(storyData.created_at),
-        sentences: sentencesData.map((s: any) => ({
-          id: s.id,
-          storyId: s.story_id,
-          orderIndex: s.order_index,
-          textOriginal: s.text_original,
-          textTranslated: s.text_translated,
-          audioUrl: s.audio_url,
-          imageUrl: s.image_url,
-        })),
-      };
-      
-      const generationTime = Date.now() - startTime;
-      
-      return {
-        story,
-        metadata: {
-          generationTime,
-          modelUsed: 'gemini-2.5-flash',
-        },
-      };
     } catch (error) {
       console.error('Story generation error:', error);
       throw error;
