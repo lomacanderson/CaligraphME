@@ -1,82 +1,135 @@
-import { useRef, useState, useEffect } from 'react';
 
-interface DrawingCanvasProps {
-  onSave: (data: string) => void;
-}
+import { useRef, useState, type ChangeEvent } from 'react'
 
-export function DrawingCanvas({ onSave }: DrawingCanvasProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [isDrawing, setIsDrawing] = useState(false);
-  const [context, setContext] = useState<CanvasRenderingContext2D | null>(null);
+import {
+  ReactSketchCanvas,
+  type ReactSketchCanvasRef
+} from 'react-sketch-canvas'
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (canvas) {
-      const ctx = canvas.getContext('2d');
-      if (ctx) {
-        ctx.strokeStyle = '#000';
-        ctx.lineWidth = 3;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-        setContext(ctx);
-      }
+import { Eraser, Pen, Redo, RotateCcw, Save, Undo } from 'lucide-react'
+
+export default function DrawingCanvas() {
+  const colorInputRef = useRef<HTMLInputElement>(null)
+  const canvasRef = useRef<ReactSketchCanvasRef>(null)
+  const [strokeColor, setStrokeColor] = useState('#a855f7')
+  const [eraseMode, setEraseMode] = useState(false)
+
+  function handleStrokeColorChange(event: ChangeEvent<HTMLInputElement>) {
+    setStrokeColor(event.target.value)
+    console.log(strokeColor)
+  }
+
+  function handleEraserClick() {
+    setEraseMode(true)
+    canvasRef.current?.eraseMode(true)
+  }
+
+  function handlePenClick() {
+    setEraseMode(false)
+    canvasRef.current?.eraseMode(false)
+  }
+
+  function handleUndoClick() {
+    canvasRef.current?.undo()
+  }
+
+  function handleRedoClick() {
+    canvasRef.current?.redo()
+  }
+
+  function handleClearClick() {
+    canvasRef.current?.clearCanvas()
+  }
+
+  async function handleSave() {
+    const dataURL = await canvasRef.current?.exportImage('png')
+    if (dataURL) {
+      const link = Object.assign(document.createElement('a'), {
+        href: dataURL,
+        style: { display: 'none' },
+        download: 'sketch.png'
+      })
+
+      document.body.appendChild(link)
+      link.click()
+      link.remove()
     }
-  }, []);
-
-  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!context) return;
-    setIsDrawing(true);
-    const { offsetX, offsetY } = e.nativeEvent;
-    context.beginPath();
-    context.moveTo(offsetX, offsetY);
-  };
-
-  const draw = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!isDrawing || !context) return;
-    const { offsetX, offsetY } = e.nativeEvent;
-    context.lineTo(offsetX, offsetY);
-    context.stroke();
-  };
-
-  const stopDrawing = () => {
-    if (!context) return;
-    setIsDrawing(false);
-    context.closePath();
-    saveCanvas();
-  };
-
-  const clearCanvas = () => {
-    const canvas = canvasRef.current;
-    if (!canvas || !context) return;
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    onSave('');
-  };
-
-  const saveCanvas = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    
-    // TODO: Implement proper SVG export
-    const dataUrl = canvas.toDataURL('image/png');
-    onSave(dataUrl);
-  };
+  }
 
   return (
-    <div className="drawing-canvas-container">
-      <canvas
+    <div className='mt-6 flex max-w-2xl gap-4'>
+      <ReactSketchCanvas
+        width='100%'
+        height='430px'
         ref={canvasRef}
-        width={800}
-        height={400}
-        className="drawing-canvas"
-        onMouseDown={startDrawing}
-        onMouseMove={draw}
-        onMouseUp={stopDrawing}
-        onMouseLeave={stopDrawing}
+        strokeColor={strokeColor}
+        canvasColor='transparent'
+        className='!rounded-2xl !border-purple-500 dark:!border-purple-800'
       />
-      <button onClick={clearCanvas} className="btn-clear">
-        Clear Canvas
-      </button>
-    </div>
-  );
-}
 
+      <div className='flex flex-col items-center gap-y-6 divide-y divide-purple-200 py-4 dark:divide-purple-900'>
+        {/* Color picker */}
+        <button
+          type='button'
+          onClick={() => colorInputRef.current?.click()}
+          style={{ backgroundColor: strokeColor }}
+        >
+          <input
+            type='color'
+            ref={colorInputRef}
+            className='sr-only'
+            value={strokeColor}
+            onChange={handleStrokeColorChange}
+          />
+        </button>
+
+        {/* Drawing mode */}
+        <div className='flex flex-col gap-3 pt-6'>
+          <button
+            type='button'
+            disabled={!eraseMode}
+            onClick={handlePenClick}
+          >
+            <Pen size={16} />
+          </button>
+          <button
+            type='button'
+            disabled={eraseMode}
+            onClick={handleEraserClick}
+          >
+            <Eraser size={16} />
+          </button>
+        </div>
+
+        {/* Actions */}
+        <div className='flex flex-col gap-3 pt-6'>
+          <button
+            type='button'
+            onClick={handleUndoClick}
+          >
+            <Undo size={16} />
+          </button>
+          <button
+            type='button'
+            onClick={handleRedoClick}
+          >
+            <Redo size={16} />
+          </button>
+          <button
+            type='button'
+            onClick={handleClearClick}
+          >
+            <RotateCcw size={16} />
+          </button>
+
+          <button
+            type='button'
+            onClick={handleSave}
+          >
+            <Save size={16} />
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}

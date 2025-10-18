@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { DrawingCanvas } from '@/components/canvas/DrawingCanvas';
+import DrawingCanvas from '@/components/canvas/DrawingCanvas';
 import { FeedbackDisplay } from '@/components/exercise/FeedbackDisplay';
 
 export function ExercisePage() {
@@ -30,7 +30,7 @@ export function ExercisePage() {
       <h1>Write the sentence</h1>
       <p className="instruction">Write: "The cat is sleeping"</p>
 
-      <DrawingCanvas onSave={setCanvasData} />
+      <DrawingCanvas/>
 
       <div className="actions">
         <button className="btn-secondary">Clear</button>
