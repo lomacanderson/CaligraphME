@@ -15,6 +15,12 @@ export function Sidebar() {
           🏠 Home
         </Link>
         <Link 
+          to="/writing" 
+          className={`nav-item ${isActive('/writing') ? 'active' : ''}`}
+        >
+          ✍️ Writing
+        </Link>
+        <Link 
           to="/stories" 
           className={`nav-item ${isActive('/stories') ? 'active' : ''}`}
         >
