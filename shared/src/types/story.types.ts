@@ -45,6 +45,7 @@ export interface StoryGenerationRequest {
   sentenceCount?: number;
   ageRange?: AgeRange;
   customPrompt?: string;
+  voiceId?: string;
 }
 
 export interface StoryGenerationResponse {

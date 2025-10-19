@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { StoryTheme, LanguageLevel, SupportedLanguage, StoryGenerationRequest } from '@shared/types';
+import { voiceApi, Voice } from '@/services/api/voice.api';
 import './StoryGenerationModal.css';
 
 interface StoryGenerationModalProps {
@@ -19,6 +20,8 @@ export function StoryGenerationModal({
 }: StoryGenerationModalProps) {
   const [useCustomPrompt, setUseCustomPrompt] = useState(false);
   const [customPrompt, setCustomPrompt] = useState('');
+  const [availableVoices, setAvailableVoices] = useState<Voice[]>([]);
+  const [selectedVoice, setSelectedVoice] = useState<string>('');
   const [formData, setFormData] = useState<StoryGenerationRequest>({
     language: userLanguage || 'es',
     level: userLevel || LanguageLevel.BEGINNER,
@@ -28,6 +31,25 @@ export function StoryGenerationModal({
   });
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Load voices when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      loadVoices();
+    }
+  }, [isOpen, formData.level]);
+
+  const loadVoices = async () => {
+    try {
+      const voices = await voiceApi.getAvailableVoices(formData.level);
+      setAvailableVoices(voices);
+      if (voices.length > 0 && !selectedVoice) {
+        setSelectedVoice(voices[0].id); // Set first voice as default
+      }
+    } catch (error) {
+      console.error('Failed to load voices:', error);
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -40,6 +62,7 @@ export function StoryGenerationModal({
       const request: StoryGenerationRequest = {
         ...formData,
         customPrompt: useCustomPrompt ? customPrompt : undefined,
+        voiceId: selectedVoice,
       };
       
       await onGenerate(request);
@@ -163,6 +186,26 @@ export function StoryGenerationModal({
                 <option value={LanguageLevel.ADVANCED}>Advanced</option>
               </select>
             </div>
+          </div>
+
+          <div className="form-section">
+            <label htmlFor="voice">Voice for Audio 🔊</label>
+            <select
+              id="voice"
+              value={selectedVoice}
+              onChange={(e) => setSelectedVoice(e.target.value)}
+              className="form-select"
+              disabled={availableVoices.length === 0}
+            >
+              {availableVoices.map((voice) => (
+                <option key={voice.id} value={voice.id}>
+                  {voice.name} - {voice.description} ({voice.gender})
+                </option>
+              ))}
+            </select>
+            <p className="form-hint">
+              Choose the voice that will narrate your story. Recommended voices are shown first.
+            </p>
           </div>
 
           <div className="form-row">

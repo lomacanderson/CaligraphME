@@ -1,10 +1,30 @@
 import { Request, Response } from 'express';
 import { StoryService } from '../services/story.service.js';
+import { AVAILABLE_VOICES, getRecommendedVoices } from '../config/voices.js';
 
 export class StoryController {
+  static async getAvailableVoices(req: Request, res: Response) {
+    try {
+      const { level } = req.query;
+      
+      if (level) {
+        const recommendedVoices = getRecommendedVoices(level as string);
+        res.json(recommendedVoices);
+      } else {
+        res.json(AVAILABLE_VOICES);
+      }
+    } catch (error: any) {
+      console.error('Get voices controller error:', error);
+      res.status(500).json({ 
+        error: 'Failed to fetch voices',
+        message: error.message 
+      });
+    }
+  }
+
   static async generateStory(req: Request, res: Response) {
     try {
-      const { language, level, theme, sentenceCount, ageRange, customPrompt } = req.body;
+      const { language, level, theme, sentenceCount, ageRange, customPrompt, voiceId } = req.body;
       
       // Validate required fields
       if (!language || !level) {
@@ -20,6 +40,7 @@ export class StoryController {
         sentenceCount,
         ageRange,
         customPrompt,
+        voiceId,
       });
       
       res.json(result);

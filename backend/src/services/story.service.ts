@@ -1,6 +1,7 @@
 import { GeminiService } from './ai/gemini.service.js';
 import { SupabaseService } from './database/supabase.service.js';
 import { textToAudio } from './ai/dictation.service.js';
+import { DEFAULT_VOICES_BY_LEVEL } from '../config/voices.js';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
@@ -16,7 +17,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export class StoryService {
-  static async generateStory(params: StoryGenerationRequest & { customPrompt?: string }): Promise<StoryGenerationResponse> {
+  static async generateStory(params: StoryGenerationRequest & { customPrompt?: string; voiceId?: string }): Promise<StoryGenerationResponse> {
     const startTime = Date.now();
     
     try {
@@ -76,7 +77,8 @@ export class StoryService {
         // 4.5. Generate audio for each sentence (blocking - wait for completion)
         console.log('🎵 Starting synchronous audio generation...');
         try {
-          await this.generateAudioForSentences(sentencesData, storyData.id);
+          const selectedVoice = params.voiceId || DEFAULT_VOICES_BY_LEVEL[params.level] || DEFAULT_VOICES_BY_LEVEL.beginner;
+          await this.generateAudioForSentences(sentencesData, storyData.id, selectedVoice);
           console.log('✅ Audio generation completed before response');
         } catch (err) {
           console.error('❌ Audio generation failed:', err);
@@ -302,7 +304,7 @@ export class StoryService {
    * Generate audio for all sentences in a story
    * This runs synchronously and blocks until all audio is generated
    */
-  private static async generateAudioForSentences(sentencesData: any[], storyId: string): Promise<void> {
+  private static async generateAudioForSentences(sentencesData: any[], storyId: string, voiceId: string = 'JBFqnCBsd6RMkjVDRZzb'): Promise<void> {
     console.log(`🎵 Generating audio for ${sentencesData.length} sentences in story ${storyId}...`);
     
     // Ensure the audio bucket exists
@@ -325,8 +327,8 @@ export class StoryService {
           fs.mkdirSync(tempDir, { recursive: true });
         }
         
-        // Generate audio using ElevenLabs
-        await textToAudio(sentence.text_original, audioFilePath);
+        // Generate audio using ElevenLabs with selected voice
+        await textToAudio(sentence.text_original, audioFilePath, voiceId);
         
         // Read the generated audio file
         const audioBuffer = fs.readFileSync(audioFilePath);

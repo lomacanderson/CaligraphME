@@ -3,6 +3,9 @@ import { StoryController } from '../controllers/story.controller.js';
 
 export const router = Router();
 
+// GET /api/stories/voices - Get available voices
+router.get('/voices', StoryController.getAvailableVoices);
+
 // POST /api/stories/generate - Generate a new story
 router.post('/generate', StoryController.generateStory);
 
