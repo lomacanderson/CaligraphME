@@ -154,7 +154,7 @@
 /* Error Message */
 .error-message {
   padding: 0.75rem;
-  background-color: rgba(239, 68, 68, 0.1);
+  background-color: rgba(255, 59, 48, 0.15);
   border: 1px solid var(--error-color);
   border-radius: var(--border-radius);
   color: var(--error-color);

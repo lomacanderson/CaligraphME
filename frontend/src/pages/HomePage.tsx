@@ -1,42 +1,36 @@
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
 import { useUserStore } from '@/stores/userStore';
+import { StoryGenerationModal } from '@/components/story/StoryGenerationModal';
 
 export function HomePage() {
   const { user } = useUserStore();
+  const [showModal, setShowModal] = useState(false);
 
   return (
     <div className="home-page">
       <section className="hero">
-        <h1>Welcome to CaligraphME! 🎨</h1>
-        <p>Learn languages through interactive stories and handwriting practice</p>
-        {user && (
-          <div className="user-welcome">
-            <h2>Hi {user.username}! 👋</h2>
-            <p>Ready to continue your language learning journey?</p>
-          </div>
-        )}
+        {user && <h2 className="greeting">Hi {user.username}! 👋</h2>}
+        <h1 className="big-title">What do you want to do today?</h1>
       </section>
 
-      <section className="features">
-        <div className="feature-card">
-          <h3>📖 Interactive Stories</h3>
-          <p>Read engaging stories in your target language</p>
+      <section className="main-options">
+        <div className="fun-option-card create-card" onClick={() => setShowModal(true)}>
+          <div className="big-emoji">✨</div>
+          <h2>Create New Story</h2>
+          <div className="action-button">Let's Go!</div>
         </div>
-        <div className="feature-card">
-          <h3>✍️ Handwriting Practice</h3>
-          <p>Write sentences and get instant feedback</p>
-        </div>
-        <div className="feature-card">
-          <h3>🏆 Earn Rewards</h3>
-          <p>Track progress and compete with others</p>
-        </div>
-      </section>
 
-      <section className="cta">
-        <Link to="/stories" className="btn-primary">
-          Start Learning
+        <Link to="/stories" className="fun-option-card browse-card">
+          <div className="big-emoji">📚</div>
+          <h2>Practice Stories</h2>
+          <div className="action-button">Start Now!</div>
         </Link>
       </section>
+
+      {showModal && (
+        <StoryGenerationModal onClose={() => setShowModal(false)} />
+      )}
     </div>
   );
 }

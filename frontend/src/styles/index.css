@@ -6,20 +6,24 @@
 }
 
 :root {
-  --primary-color: #6366f1;
-  --secondary-color: #8b5cf6;
-  --success-color: #10b981;
-  --error-color: #ef4444;
-  --warning-color: #f59e0b;
+  /* Color Palette */
+  --primary-color: #4DA6FF;        /* Sky Blue - primary interactive elements */
+  --secondary-color: #FF9500;      /* Tangerine Orange - secondary actions */
+  --success-color: #4CD964;        /* Grass Green - success states */
+  --error-color: #FF3B30;          /* Bright Red - errors & alerts */
+  --warning-color: #FFD60A;        /* Sunshine Yellow - highlights & rewards */
   
+  /* Background Colors */
   --bg-primary: #ffffff;
   --bg-secondary: #f3f4f6;
   --bg-tertiary: #e5e7eb;
   
+  /* Text Colors */
   --text-primary: #111827;
   --text-secondary: #6b7280;
   --text-tertiary: #9ca3af;
   
+  /* Layout */
   --border-color: #d1d5db;
   --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
@@ -49,6 +53,7 @@ body {
 .layout-container {
   display: flex;
   flex: 1;
+  min-height: 100vh;
 }
 
 .main-content {
@@ -59,77 +64,19 @@ body {
   width: 100%;
 }
 
-/* Header */
-.header {
-  background-color: var(--bg-primary);
-  border-bottom: 1px solid var(--border-color);
-  box-shadow: var(--shadow);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.header-container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1rem 2rem;
-  max-width: 1400px;
-  margin: 0 auto;
-}
-
-.logo h1 {
-  font-size: 1.5rem;
-  color: var(--primary-color);
-  text-decoration: none;
-}
-
-.nav {
-  display: flex;
-  gap: 2rem;
-}
-
-.nav a {
-  text-decoration: none;
-  color: var(--text-primary);
-  font-weight: 500;
-  transition: color 0.2s;
-}
-
-.nav a:hover {
-  color: var(--primary-color);
-}
-
-.user-section {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.points {
-  font-weight: 600;
-  color: var(--primary-color);
-}
-
-.avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: var(--primary-color);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-  text-decoration: none;
-}
-
 /* Sidebar */
 .sidebar {
   width: 240px;
   background-color: var(--bg-primary);
   border-right: 1px solid var(--border-color);
   padding: 2rem 0;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.sidebar.closed {
+  width: 70px;
 }
 
 .sidebar nav {
@@ -143,6 +90,33 @@ body {
   color: var(--text-primary);
   transition: all 0.2s;
   border-left: 3px solid transparent;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  white-space: nowrap;
+}
+
+.sidebar .nav-icon {
+  font-size: 1.5rem;
+  min-width: 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar .nav-text {
+  transition: opacity 0.2s;
+}
+
+.sidebar.closed .nav-item {
+  padding: 0.75rem 1rem;
+  justify-content: center;
+}
+
+.sidebar.closed .nav-text {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
 }
 
 .sidebar .nav-item:hover {
@@ -155,6 +129,50 @@ body {
   border-left-color: var(--primary-color);
   color: var(--primary-color);
   font-weight: 600;
+}
+
+/* Sidebar Toggle Button */
+.sidebar-toggle {
+  position: fixed;
+  left: 240px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 64px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 0 8px 8px 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  z-index: 100;
+  transition: all 0.3s ease;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-toggle:hover {
+  background-color: var(--secondary-color);
+  width: 36px;
+}
+
+.sidebar-toggle.closed {
+  left: 70px;
+}
+
+.sidebar-toggle:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+/* Main Content Adjustments */
+.main-content {
+  transition: all 0.3s ease;
+}
+
+.main-content.sidebar-closed {
+  margin-left: 0;
 }
 
 /* Buttons */
@@ -176,7 +194,7 @@ body {
 }
 
 .btn-primary:hover {
-  background-color: #4f46e5;
+  background-color: #3d8fe5;
 }
 
 .btn-primary:disabled {
@@ -249,6 +267,149 @@ body {
   color: var(--primary-color);
 }
 
+/* Full Width Main Content (for pages without sidebar) */
+.main-content.full-width {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Home Page - Minimalistic & Fun for Kids */
+.home-page {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+.hero {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.greeting {
+  font-size: 2rem;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+  font-weight: 700;
+  animation: wave 0.6s ease-in-out;
+}
+
+@keyframes wave {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.big-title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.2;
+  margin: 0;
+}
+
+/* Main Options - Big & Fun */
+.main-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 3rem;
+  max-width: 1000px;
+  width: 100%;
+}
+
+.fun-option-card {
+  background-color: var(--bg-primary);
+  border-radius: 24px;
+  padding: 4rem 2rem;
+  text-align: center;
+  cursor: pointer;
+  text-decoration: none;
+  border: 4px solid;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.create-card {
+  border-color: var(--warning-color);
+  background: linear-gradient(135deg, rgba(255, 214, 10, 0.1) 0%, rgba(255, 149, 0, 0.1) 100%);
+}
+
+.browse-card {
+  border-color: var(--primary-color);
+  background: linear-gradient(135deg, rgba(77, 166, 255, 0.1) 0%, rgba(76, 217, 100, 0.1) 100%);
+}
+
+.fun-option-card:hover {
+  transform: scale(1.05) rotate(-1deg);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.fun-option-card:active {
+  transform: scale(0.98);
+}
+
+.big-emoji {
+  font-size: 6rem;
+  margin-bottom: 0.5rem;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+.fun-option-card:hover .big-emoji {
+  animation: spin 0.6s ease-in-out;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(10deg) scale(1.2); }
+  100% { transform: rotate(0deg) scale(1); }
+}
+
+.fun-option-card h2 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.action-button {
+  background-color: var(--success-color);
+  color: white;
+  padding: 1rem 3rem;
+  border-radius: 50px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(76, 217, 100, 0.3);
+}
+
+.create-card .action-button {
+  background-color: var(--warning-color);
+  color: var(--text-primary);
+  box-shadow: 0 4px 12px rgba(255, 214, 10, 0.3);
+}
+
+.browse-card .action-button {
+  background-color: var(--primary-color);
+  box-shadow: 0 4px 12px rgba(77, 166, 255, 0.3);
+}
+
+.fun-option-card:hover .action-button {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .layout-container {
@@ -259,15 +420,81 @@ body {
     width: 100%;
     border-right: none;
     border-bottom: 1px solid var(--border-color);
+    padding: 1rem 0;
+  }
+
+  .sidebar.closed {
+    width: 100%;
+    height: 60px;
   }
   
   .sidebar nav {
     flex-direction: row;
     overflow-x: auto;
+    justify-content: space-around;
+  }
+
+  .sidebar .nav-item {
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+
+  .sidebar.closed .nav-item {
+    padding: 0.5rem 1rem;
+  }
+
+  .sidebar.closed .nav-text {
+    opacity: 1;
+    width: auto;
+  }
+
+  .sidebar-toggle {
+    display: none;
   }
   
   .main-content {
     padding: 1rem;
+  }
+
+  .home-page {
+    padding: 1rem;
+    min-height: 100vh;
+  }
+
+  .greeting {
+    font-size: 1.5rem;
+  }
+
+  .big-title {
+    font-size: 2rem;
+  }
+
+  .hero {
+    margin-bottom: 2rem;
+  }
+
+  .main-options {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .fun-option-card {
+    padding: 3rem 1.5rem;
+  }
+
+  .big-emoji {
+    font-size: 4rem;
+  }
+
+  .fun-option-card h2 {
+    font-size: 1.8rem;
+  }
+
+  .action-button {
+    font-size: 1.2rem;
+    padding: 0.875rem 2rem;
   }
 }
 

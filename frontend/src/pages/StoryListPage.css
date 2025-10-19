@@ -49,7 +49,7 @@
 
 /* Error Banner */
 .error-banner {
-  background-color: rgba(239, 68, 68, 0.1);
+  background-color: rgba(255, 59, 48, 0.15);
   border: 1px solid var(--error-color);
   color: var(--error-color);
   padding: 1rem;
@@ -154,17 +154,17 @@
 }
 
 .level-beginner {
-  background-color: rgba(16, 185, 129, 0.1);
+  background-color: rgba(76, 217, 100, 0.15);
   color: var(--success-color);
 }
 
 .level-intermediate {
-  background-color: rgba(245, 158, 11, 0.1);
-  color: var(--warning-color);
+  background-color: rgba(255, 149, 0, 0.15);
+  color: var(--secondary-color);
 }
 
 .level-advanced {
-  background-color: rgba(99, 102, 241, 0.1);
+  background-color: rgba(77, 166, 255, 0.15);
   color: var(--primary-color);
 }
 

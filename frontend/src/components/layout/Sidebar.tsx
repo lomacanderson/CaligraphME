@@ -1,42 +1,40 @@
 import { Link, useLocation } from 'react-router-dom';
 
-export function Sidebar() {
+interface SidebarProps {
+  isOpen: boolean;
+}
+
+export function Sidebar({ isOpen }: SidebarProps) {
   const location = useLocation();
 
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar ${isOpen ? 'open' : 'closed'}`}>
       <nav>
         <Link 
           to="/" 
           className={`nav-item ${isActive('/') ? 'active' : ''}`}
+          title="Home"
         >
-          🏠 Home
+          <span className="nav-icon">🏠</span>
+          <span className="nav-text">Home</span>
         </Link>
         <Link 
           to="/writing" 
           className={`nav-item ${isActive('/writing') ? 'active' : ''}`}
+          title="Writing"
         >
-          ✍️ Writing
+          <span className="nav-icon">✍️</span>
+          <span className="nav-text">Writing</span>
         </Link>
         <Link 
           to="/stories" 
           className={`nav-item ${isActive('/stories') ? 'active' : ''}`}
+          title="Stories"
         >
-          📚 Stories
-        </Link>
-        <Link 
-          to="/progress" 
-          className={`nav-item ${isActive('/progress') ? 'active' : ''}`}
-        >
-          📊 Progress
-        </Link>
-        <Link 
-          to="/leaderboard" 
-          className={`nav-item ${isActive('/leaderboard') ? 'active' : ''}`}
-        >
-          🏆 Leaderboard
+          <span className="nav-icon">📚</span>
+          <span className="nav-text">Stories</span>
         </Link>
       </nav>
     </aside>
