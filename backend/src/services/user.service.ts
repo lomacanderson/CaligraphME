@@ -163,6 +163,53 @@ export class UserService {
     };
   }
 
+  static async deductPoints(userId: string, points: number, reason?: string): Promise<any> {
+    const supabase = SupabaseService.getClient();
+    
+    // Get current user
+    const { data: user, error: userError } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', userId)
+      .single();
+
+    if (userError) throw new Error('User not found');
+
+    // Check if user has enough points
+    if (user.total_points < points) {
+      throw new Error('Insufficient points');
+    }
+
+    const newPoints = user.total_points - points;
+    const newLevel = this.calculateLevel(newPoints);
+
+    // Update user points and level
+    const { data: updated, error: updateError } = await supabase
+      .from('users')
+      .update({
+        total_points: newPoints,
+        level: newLevel,
+      })
+      .eq('id', userId)
+      .select()
+      .single();
+
+    if (updateError) throw new Error('Failed to deduct points');
+
+    // Create point transaction record
+    await supabase
+      .from('point_transactions')
+      .insert({
+        user_id: userId,
+        amount: -points,
+        type: 'spent',
+        reason: reason || 'Points redeemed',
+        balance_after: newPoints,
+      });
+
+    return this.formatUser(updated);
+  }
+
   static calculateLevel(totalPoints: number): string {
     if (totalPoints >= LEVEL_THRESHOLDS.advanced) return 'advanced';
     if (totalPoints >= LEVEL_THRESHOLDS.intermediate) return 'intermediate';

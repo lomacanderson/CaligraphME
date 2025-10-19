@@ -11,6 +11,8 @@ import { ExercisePage } from './pages/ExercisePage';
 import { WritingPage } from './pages/WritingPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { RewardsPage } from './pages/RewardsPage';
+import { WalletPage } from './pages/WalletPage';
+import { ParentDashboard } from './pages/ParentDashboard';
 import { useUserStore } from './stores/userStore';
 
 function App() {
@@ -90,6 +92,22 @@ function App() {
           <ProtectedRoute>
             <Layout>
               <RewardsPage />
+            </Layout>
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/wallet" element={
+          <ProtectedRoute>
+            <Layout>
+              <WalletPage />
+            </Layout>
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/parent-dashboard" element={
+          <ProtectedRoute>
+            <Layout>
+              <ParentDashboard />
             </Layout>
           </ProtectedRoute>
         } />

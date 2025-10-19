@@ -56,6 +56,22 @@ export function Sidebar({ isOpen }: SidebarProps) {
           <span className="nav-icon">🏆</span>
           <span className="nav-text">Rewards</span>
         </Link>
+        <Link 
+          to="/wallet" 
+          className={`nav-item ${isActive('/wallet') ? 'active' : ''}`}
+          title="Wallet"
+        >
+          <span className="nav-icon">💰</span>
+          <span className="nav-text">Wallet</span>
+        </Link>
+        <Link 
+          to="/parent-dashboard" 
+          className={`nav-item ${isActive('/parent-dashboard') ? 'active' : ''}`}
+          title="Allowance"
+        >
+          <span className="nav-icon">⚙️</span>
+          <span className="nav-text">Allowance</span>
+        </Link>
         
         <div className="sidebar-spacer"></div>
         

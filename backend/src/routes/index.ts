@@ -6,6 +6,7 @@ import { router as rewardRouter } from './reward.routes.js';
 import { router as userRouter } from './user.routes.js';
 import { router as ocrRouter } from './ocr.routes.js';
 import { router as customVoiceRouter } from './custom-voice.routes.js';
+import paymentRouter from './payment.routes.js';
 
 export const router = Router();
 
@@ -17,6 +18,7 @@ router.use('/rewards', rewardRouter);
 router.use('/users', userRouter);
 router.use('/ocr', ocrRouter);
 router.use('/custom-voices', customVoiceRouter);
+router.use('/payment', paymentRouter);
 
 // API info
 router.get('/', (_req, res) => {
@@ -31,6 +33,7 @@ router.get('/', (_req, res) => {
       users: '/api/users',
       ocr: '/api/ocr',
       customVoices: '/api/custom-voices',
+      payment: '/api/payment',
     },
   });
 });
