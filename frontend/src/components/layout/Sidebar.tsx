@@ -25,22 +25,6 @@ export function Sidebar({ isOpen }: SidebarProps) {
     <aside className={`sidebar ${isOpen ? 'open' : 'closed'}`}>
       <nav>
         <Link 
-          to="/" 
-          className={`nav-item ${isActive('/') ? 'active' : ''}`}
-          title="Home"
-        >
-          <span className="nav-icon">🏠</span>
-          <span className="nav-text">Home</span>
-        </Link>
-        <Link 
-          to="/writing" 
-          className={`nav-item ${isActive('/writing') ? 'active' : ''}`}
-          title="Writing"
-        >
-          <span className="nav-icon">✍️</span>
-          <span className="nav-text">Writing</span>
-        </Link>
-        <Link 
           to="/stories" 
           className={`nav-item ${isActive('/stories') ? 'active' : ''}`}
           title="Stories"

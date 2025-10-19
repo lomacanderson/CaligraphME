@@ -48,14 +48,6 @@ function App() {
           </ProtectedRoute>
         } />
         
-        <Route path="/writing" element={
-          <ProtectedRoute>
-            <Layout>
-              <WritingPage />
-            </Layout>
-          </ProtectedRoute>
-        } />
-        
         <Route path="/stories" element={
           <ProtectedRoute>
             <Layout>

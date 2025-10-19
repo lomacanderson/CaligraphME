@@ -333,14 +333,36 @@ export class StoryService {
         let audioBuffer: Buffer;
         
         if (isCustomVoice) {
-          // This is a custom voice - use the custom voice service
-          console.log(`🎤 Using custom voice: ${voiceId}`);
-          const { CustomVoiceService } = await import('./custom-voice.service.js');
-          audioBuffer = await CustomVoiceService.generateAudioWithCustomVoice(
-            voiceId,
-            'system', // We'll need to get the actual user ID from context
-            sentence.text_original
-          );
+          // This is a custom voice - try to use it, but fall back to standard voice if it fails
+          try {
+            console.log(`🎤 Attempting to use custom voice: ${voiceId}`);
+            const { CustomVoiceService } = await import('./custom-voice.service.js');
+            
+            // Try to get the voice without user validation first
+            // This is a temporary workaround - ideally we'd pass userId from the request
+            const supabase = SupabaseService.getClient();
+            const { data: customVoice, error } = await supabase
+              .from('custom_voices')
+              .select('*')
+              .eq('id', voiceId)
+              .eq('is_active', true)
+              .single();
+            
+            if (error || !customVoice) {
+              throw new Error('Custom voice not found or not active');
+            }
+            
+            console.log(`✅ Found custom voice, generating audio with ElevenLabs voice ID: ${customVoice.elevenlabs_voice_id}`);
+            // Use the ElevenLabs voice ID from the custom voice
+            await textToAudio(sentence.text_original, audioFilePath, customVoice.elevenlabs_voice_id);
+            audioBuffer = fs.readFileSync(audioFilePath);
+          } catch (customVoiceError) {
+            console.warn(`⚠️ Failed to use custom voice, falling back to default:`, customVoiceError);
+            // Fall back to default voice
+            const defaultVoice = DEFAULT_VOICES_BY_LEVEL.beginner;
+            await textToAudio(sentence.text_original, audioFilePath, defaultVoice);
+            audioBuffer = fs.readFileSync(audioFilePath);
+          }
         } else {
           // This is a standard ElevenLabs voice
           console.log(`🔊 Using ElevenLabs voice: ${voiceId}`);

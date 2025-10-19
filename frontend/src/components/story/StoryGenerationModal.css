@@ -80,11 +80,37 @@
   margin-bottom: 1.5rem;
 }
 
+.form-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
 .form-section label {
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 600;
   color: var(--text-primary);
+}
+
+.form-section-header label {
+  margin-bottom: 0;
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  color: var(--primary-color);
+  cursor: pointer;
+  font-size: 0.875rem;
+  padding: 0.25rem 0.5rem;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+
+.btn-link:hover {
+  color: var(--secondary-color);
 }
 
 .form-toggle {

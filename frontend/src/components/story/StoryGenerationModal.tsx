@@ -225,7 +225,17 @@ export function StoryGenerationModal({
 
           {useCustomVoice ? (
             <div className="form-section">
-              <label htmlFor="customVoice">Custom Voice for Audio 🎤</label>
+              <div className="form-section-header">
+                <label htmlFor="customVoice">Custom Voice for Audio 🎤</label>
+                <button
+                  type="button"
+                  className="btn-link"
+                  onClick={() => setShowCustomVoiceManager(true)}
+                  style={{ fontSize: '0.9rem', padding: '0.25rem 0.5rem' }}
+                >
+                  {customVoices.length > 0 ? 'Manage Voices' : 'Add Voice'}
+                </button>
+              </div>
               {customVoices.length > 0 ? (
                 <select
                   id="customVoice"
@@ -242,13 +252,6 @@ export function StoryGenerationModal({
               ) : (
                 <div className="no-custom-voices">
                   <p>No custom voices available. Create one to get started!</p>
-                  <button
-                    type="button"
-                    className="btn-secondary"
-                    onClick={() => setShowCustomVoiceManager(true)}
-                  >
-                    Manage Custom Voices
-                  </button>
                 </div>
               )}
               <p className="form-hint">

@@ -682,6 +682,16 @@ body {
   margin: 0;
 }
 
+.subtitle {
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  margin-top: 1rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.5;
+}
+
 /* Main Options - Simple Buttons */
 .main-options {
   display: flex;
@@ -706,16 +716,20 @@ body {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.create-button {
-  border-color: var(--warning-color);
-  background-color: var(--warning-color);
-  color: var(--text-primary);
+.get-started-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  font-size: 1.5rem;
+  padding: 1.5rem 3rem;
+  border-radius: 50px;
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+  transition: all 0.3s ease;
 }
 
-.practice-button {
-  border-color: var(--primary-color);
-  background-color: var(--primary-color);
-  color: white;
+.get-started-button:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
 }
 
 .home-button:hover {
