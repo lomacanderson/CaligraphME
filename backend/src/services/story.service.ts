@@ -73,10 +73,15 @@ export class StoryService {
           throw new Error(`Failed to save sentences: ${sentencesError?.message}`);
         }
         
-        // 4.5. Generate audio for each sentence (async, don't block response)
-        this.generateAudioForSentences(sentencesData, storyData.id).catch(err => {
-          console.error('Audio generation error:', err);
-        });
+        // 4.5. Generate audio for each sentence (blocking - wait for completion)
+        console.log('🎵 Starting synchronous audio generation...');
+        try {
+          await this.generateAudioForSentences(sentencesData, storyData.id);
+          console.log('✅ Audio generation completed before response');
+        } catch (err) {
+          console.error('❌ Audio generation failed:', err);
+          // Continue with story creation even if audio fails
+        }
         
         // 5. Format and return the response
         const story: Story = {
@@ -295,7 +300,7 @@ export class StoryService {
 
   /**
    * Generate audio for all sentences in a story
-   * This runs asynchronously in the background
+   * This runs synchronously and blocks until all audio is generated
    */
   private static async generateAudioForSentences(sentencesData: any[], storyId: string): Promise<void> {
     console.log(`🎵 Generating audio for ${sentencesData.length} sentences in story ${storyId}...`);
