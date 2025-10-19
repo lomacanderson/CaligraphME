@@ -12,20 +12,27 @@ export class UserService {
     const supabase = SupabaseService.getClient();
     
     try {
-      // Create user in database
+      // Create user in database with Supabase auth ID if provided
+      const insertData: any = {
+        email: data.email,
+        username: data.username,
+        first_name: data.firstName,
+        last_name: data.lastName,
+        age: data.age,
+        native_language: data.nativeLanguage,
+        target_language: data.targetLanguage,
+        level: data.level || 'beginner',
+        total_points: 0,
+      };
+
+      // If an ID is provided (from Supabase auth), use it
+      if (data.id) {
+        insertData.id = data.id;
+      }
+
       const { data: user, error } = await supabase
         .from('users')
-        .insert({
-          email: data.email,
-          username: data.username,
-          first_name: data.firstName,
-          last_name: data.lastName,
-          age: data.age,
-          native_language: data.nativeLanguage,
-          target_language: data.targetLanguage,
-          level: data.level || 'beginner',
-          total_points: 0,
-        })
+        .insert(insertData)
         .select()
         .single();
 

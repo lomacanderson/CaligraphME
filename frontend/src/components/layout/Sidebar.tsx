@@ -1,4 +1,5 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useUserStore } from '@/stores/userStore';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -6,8 +7,19 @@ interface SidebarProps {
 
 export function Sidebar({ isOpen }: SidebarProps) {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { logout } = useUserStore();
 
   const isActive = (path: string) => location.pathname === path;
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
 
   return (
     <aside className={`sidebar ${isOpen ? 'open' : 'closed'}`}>
@@ -44,6 +56,17 @@ export function Sidebar({ isOpen }: SidebarProps) {
           <span className="nav-icon">🏆</span>
           <span className="nav-text">Rewards</span>
         </Link>
+        
+        <div className="sidebar-spacer"></div>
+        
+        <button 
+          onClick={handleLogout}
+          className="nav-item logout-button"
+          title="Logout"
+        >
+          <span className="nav-icon">🚪</span>
+          <span className="nav-text">Logout</span>
+        </button>
       </nav>
     </aside>
   );
