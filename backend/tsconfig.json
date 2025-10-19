@@ -1,28 +1,19 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "module": "ESNext",
-    "lib": ["ES2020"],
-    "outDir": "./dist",
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
+    "module": "commonjs",
+    "outDir": "dist",
+    "rootDir": "src",
     "strict": true,
+    "esModuleInterop": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@shared/*": ["../shared/src/*"],
+      "@shared/*": ["../shared/dist/*"]   // <-- IMPORTANT: built output
     }
   },
-  "include": ["src/**/*", "../shared/src/**/*"],
-  "exclude": ["node_modules", "dist"]
+  "include": ["src/**/*"],
+  "exclude": ["dist", "node_modules"],
+  "references": [{ "path": "../shared" }]  // <-- build shared first
 }
-
