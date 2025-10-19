@@ -1,4 +1,4 @@
-import { ElevenLabsClient } from '@elevenlabs/elevenlabs-js';
+import { ElevenLabsClient } from 'elevenlabs';
 import * as dotenv from 'dotenv';
 import { createWriteStream } from 'fs';
 import { Readable } from 'stream'; 

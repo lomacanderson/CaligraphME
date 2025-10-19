@@ -124,10 +124,36 @@
   padding: 0.25rem 0.5rem;
   border-radius: 6px;
   display: inline;
+  position: relative;
 }
 
 .story-sentence:hover {
   background-color: var(--bg-secondary);
+}
+
+.story-sentence.has-audio {
+  cursor: pointer;
+}
+
+.story-sentence.has-audio:hover {
+  background-color: rgba(77, 166, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+.audio-icon {
+  font-size: 0.9em;
+  opacity: 0.7;
+  margin-right: 0.2em;
+  animation: pulse-subtle 2s infinite;
+}
+
+@keyframes pulse-subtle {
+  0%, 100% { 
+    opacity: 0.7;
+  }
+  50% { 
+    opacity: 1;
+  }
 }
 
 .current-sentence {

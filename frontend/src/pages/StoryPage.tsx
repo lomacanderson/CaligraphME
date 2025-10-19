@@ -30,12 +30,26 @@ export function StoryPage() {
     try {
       setLoading(true);
       setError(null);
-      console.log('Loading story with ID:', storyId);
+      console.log('📖 Loading story with ID:', storyId);
       const data = await storyApi.getStoryById(storyId);
-      console.log('Story loaded:', data);
+      console.log('✅ Story loaded successfully:', data.title);
+      console.log('📝 Total sentences:', data.sentences.length);
+      
+      // Log audio availability
+      const sentencesWithAudio = data.sentences.filter((s: any) => s.audioUrl);
+      console.log(`🎵 Audio available for ${sentencesWithAudio.length}/${data.sentences.length} sentences`);
+      
+      data.sentences.forEach((sentence: any, index: number) => {
+        console.log(`  Sentence ${index + 1}:`, {
+          text: sentence.textOriginal,
+          hasAudio: !!sentence.audioUrl,
+          audioUrl: sentence.audioUrl || 'not generated yet'
+        });
+      });
+      
       setStory(data);
     } catch (error: any) {
-      console.error('Failed to load story:', error);
+      console.error('❌ Failed to load story:', error);
       setError(error.message || 'Failed to load story');
     } finally {
       setLoading(false);
@@ -149,10 +163,51 @@ export function StoryPage() {
     );
   }
 
-  const currentSentence = story.sentences[currentSentenceIndex];
-
   const handleSentenceClick = (index: number) => {
+    console.log('📍 Sentence clicked:', index);
     setCurrentSentenceIndex(index);
+    
+    // Play audio if available
+    const sentence = story!.sentences[index];
+    console.log('🎵 Sentence data:', {
+      id: sentence.id,
+      text: sentence.textOriginal,
+      audioUrl: sentence.audioUrl,
+      hasAudio: !!sentence.audioUrl
+    });
+    
+    if (sentence.audioUrl) {
+      const audioUrl = `http://localhost:3000${sentence.audioUrl}`;
+      console.log('🔊 Playing audio from:', audioUrl);
+      const audio = new Audio(audioUrl);
+      
+      audio.addEventListener('loadstart', () => {
+        console.log('⏳ Audio loading started...');
+      });
+      
+      audio.addEventListener('canplay', () => {
+        console.log('✅ Audio loaded successfully, ready to play');
+      });
+      
+      audio.addEventListener('playing', () => {
+        console.log('▶️ Audio is now playing');
+      });
+      
+      audio.addEventListener('ended', () => {
+        console.log('⏹️ Audio playback finished');
+      });
+      
+      audio.play()
+        .then(() => {
+          console.log('✅ Audio playback started successfully');
+        })
+        .catch(err => {
+          console.error('❌ Error playing audio:', err);
+          console.error('Audio URL that failed:', audioUrl);
+        });
+    } else {
+      console.log('⚠️ No audio available for this sentence yet');
+    }
   };
 
   return (
@@ -176,9 +231,11 @@ export function StoryPage() {
             {story.sentences.map((sentence, index) => (
               <span
                 key={sentence.id}
-                className={`story-sentence ${index === currentSentenceIndex ? 'current-sentence' : ''} ${index < currentSentenceIndex ? 'completed-sentence' : ''}`}
+                className={`story-sentence ${index === currentSentenceIndex ? 'current-sentence' : ''} ${index < currentSentenceIndex ? 'completed-sentence' : ''} ${sentence.audioUrl ? 'has-audio' : ''}`}
                 onClick={() => handleSentenceClick(index)}
+                title={sentence.audioUrl ? 'Click to hear pronunciation 🔊' : undefined}
               >
+                {sentence.audioUrl && <span className="audio-icon">🔊 </span>}
                 {sentence.textTranslated}
                 {index < story.sentences.length - 1 ? ' ' : ''}
               </span>

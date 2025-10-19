@@ -1,11 +1,28 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useUserStore } from '@/stores/userStore';
 import { StoryGenerationModal } from '@/components/story/StoryGenerationModal';
+import { storyApi } from '@/services/api/story.api';
+import { StoryGenerationRequest } from '@shared/types';
 
 export function HomePage() {
   const { user } = useUserStore();
+  const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
+
+  const handleGenerateStory = async (request: StoryGenerationRequest) => {
+    try {
+      console.log('🎨 Generating story with request:', request);
+      const response = await storyApi.generateStory(request);
+      console.log('✅ Story generated successfully:', response.story.id);
+      
+      // Navigate to the new story
+      navigate(`/stories/${response.story.id}`);
+    } catch (error: any) {
+      console.error('❌ Failed to generate story:', error);
+      throw error; // Let the modal handle the error display
+    }
+  };
 
   return (
     <div className="home-page">
@@ -28,9 +45,13 @@ export function HomePage() {
         </Link>
       </section>
 
-      {showModal && (
-        <StoryGenerationModal onClose={() => setShowModal(false)} />
-      )}
+      <StoryGenerationModal 
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        onGenerate={handleGenerateStory}
+        userLanguage={user?.targetLanguage}
+        userLevel={user?.level}
+      />
     </div>
   );
 }

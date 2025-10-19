@@ -1,5 +1,8 @@
 import { GeminiService } from './ai/gemini.service.js';
 import { SupabaseService } from './database/supabase.service.js';
+import { textToAudio } from './ai/dictation.service.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { 
   Story, 
   StorySentence, 
@@ -7,6 +10,9 @@ import {
   StoryGenerationResponse, 
   StoryTheme 
 } from '@shared/types';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export class StoryService {
   static async generateStory(params: StoryGenerationRequest & { customPrompt?: string }): Promise<StoryGenerationResponse> {
@@ -65,6 +71,11 @@ export class StoryService {
           
           throw new Error(`Failed to save sentences: ${sentencesError?.message}`);
         }
+        
+        // 4.5. Generate audio for each sentence (async, don't block response)
+        this.generateAudioForSentences(sentencesData, storyData.id).catch(err => {
+          console.error('Audio generation error:', err);
+        });
         
         // 5. Format and return the response
         const story: Story = {
@@ -279,6 +290,47 @@ export class StoryService {
       console.error('Delete story error:', error);
       throw error;
     }
+  }
+
+  /**
+   * Generate audio for all sentences in a story
+   * This runs asynchronously in the background
+   */
+  private static async generateAudioForSentences(sentencesData: any[], storyId: string): Promise<void> {
+    console.log(`🎵 Generating audio for ${sentencesData.length} sentences in story ${storyId}...`);
+    
+    const audioDir = path.join(__dirname, '..', '..', 'public', 'audio');
+    
+    for (const sentence of sentencesData) {
+      try {
+        // Generate unique filename for this sentence
+        const audioFileName = `${sentence.id}.mp3`;
+        const audioFilePath = path.join(audioDir, audioFileName);
+        
+        // Generate audio using ElevenLabs
+        await textToAudio(sentence.text_original, audioFilePath);
+        
+        // Build the audio URL (relative path for frontend)
+        const audioUrl = `/audio/${audioFileName}`;
+        
+        // Update the sentence in the database with the audio URL
+        const { error } = await SupabaseService.client
+          .from('story_sentences')
+          .update({ audio_url: audioUrl })
+          .eq('id', sentence.id);
+        
+        if (error) {
+          console.error(`Failed to update audio URL for sentence ${sentence.id}:`, error);
+        } else {
+          console.log(`✅ Generated audio for sentence: "${sentence.text_original.substring(0, 30)}..."`);
+        }
+      } catch (error) {
+        console.error(`Failed to generate audio for sentence ${sentence.id}:`, error);
+        // Continue with other sentences even if one fails
+      }
+    }
+    
+    console.log(`🎉 Audio generation completed for story ${storyId}`);
   }
 }
 
