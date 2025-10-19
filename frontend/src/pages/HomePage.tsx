@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useUserStore } from '@/stores/userStore';
 import { StoryGenerationModal } from '@/components/story/StoryGenerationModal';
 import { storyApi } from '@/services/api/story.api';
-import { StoryGenerationRequest } from '@shared/types';
+import { StoryGenerationRequest, SupportedLanguage } from '@shared/types';
 import logoFull from '@/components/icons/CalligraphMELogoFull-removebg.png';
 
 export function HomePage() {
@@ -47,7 +47,7 @@ export function HomePage() {
         isOpen={showModal}
         onClose={() => setShowModal(false)}
         onGenerate={handleGenerateStory}
-        userLanguage={user?.targetLanguage}
+        userLanguage={user?.targetLanguage as SupportedLanguage}
         userLevel={user?.level}
       />
     </div>
