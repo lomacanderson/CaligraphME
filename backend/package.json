@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsc -b -w shared backend",
-    "build": "tsc -b shared backend",
+    "dev": "tsc -b -w ../shared .",
+    "build": "tsc -b ../shared .",
     "start": "node dist/index.js",
     "lint": "eslint . --ext .ts"
   },
