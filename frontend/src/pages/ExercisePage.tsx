@@ -9,16 +9,17 @@ export function ExercisePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [feedback, setFeedback] = useState<any>(null);
 
-  const handleSubmit = async (imageData: string) => {
+  const handleSubmit = async (imageData: string, extractedText?: string, confidence?: number) => {
     try {
       setIsSubmitting(true);
       setCanvasData(imageData);
+      console.log('📝 Canvas submitted');
+      console.log('🔍 OCR extracted:', extractedText || '(none)');
+      console.log('📊 Confidence:', confidence || 'N/A');
       // TODO: Implement submission
-      // 1. Submit canvas to API
-      // 2. Process OCR
-      // 3. Grade
-      // 4. Show feedback
-      console.log('Canvas submitted:', imageData);
+      // 1. Submit canvas to API with real OCR text
+      // 2. Grade using the extracted text
+      // 3. Show feedback
     } catch (error) {
       console.error('Failed to submit:', error);
     } finally {

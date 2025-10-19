@@ -16,6 +16,11 @@ export interface GradingResponse {
   feedback: CombinedFeedback;
   pointsEarned: number;
   breakdown: PointBreakdown;
+  // Level-up and achievements (optional, only if backend returns them)
+  leveledUp?: boolean;
+  newLevel?: string;
+  newAchievements?: any[];
+  user?: any;
 }
 
 export interface PointBreakdown {

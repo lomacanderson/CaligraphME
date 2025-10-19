@@ -5,18 +5,15 @@ import {
   type ReactSketchCanvasRef
 } from 'react-sketch-canvas'
 
-import { Eraser, Pen, Redo, RotateCcw, Save, Undo } from "lucide-react";
+import { Eraser, Pen, Redo, RotateCcw, Undo } from "lucide-react";
 import Tesseract from "tesseract.js";
 
 interface DrawingCanvasProps {
-  onSubmit: (imageData: string) => void;
+  onSubmit: (imageData: string, extractedText?: string, confidence?: number) => void;
   submitButtonText?: string;
 }
 
 export function DrawingCanvas({ onSubmit, submitButtonText = "Submit" }: DrawingCanvasProps) {
-  const [strokeColor, setStrokeColor] = useState('#000000')
-  const [eraseMode, setEraseMode] = useState(false)
-
   const colorInputRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<ReactSketchCanvasRef>(null);
 
@@ -109,14 +106,37 @@ export function DrawingCanvas({ onSubmit, submitButtonText = "Submit" }: Drawing
   async function handleSubmit() {
     const dataURL = await canvasRef.current?.exportImage('png')
     if (dataURL) {
-      onSubmit(dataURL);
+      console.log('🖼️ Canvas exported as PNG');
+      
+      // First, try to recognize text using OCR
+      let extractedText = '';
+      let confidence = 0;
+      
+      // Try handwriting API first (if available)
+      if (recognizerRef.current) {
+        console.log('✍️ Using browser handwriting recognition...');
+        const hwText = await recognizeFromStrokes();
+        if (hwText) {
+          extractedText = hwText;
+          confidence = 0.95; // Handwriting API typically has high confidence
+          console.log('✅ Handwriting API result:', extractedText);
+        }
+      }
+      
+      // Fallback to Tesseract OCR if handwriting API didn't work
+      if (!extractedText) {
+        console.log('📸 Fallback to Tesseract OCR...');
+        const ocrText = await runOCR(dataURL);
+        extractedText = ocrText || '';
+        confidence = avgConfidence ? avgConfidence / 100 : 0.5;
+        console.log('✅ Tesseract OCR result:', extractedText, 'confidence:', confidence);
+      }
+      
+      // Pass both the image and extracted text to parent
+      onSubmit(dataURL, extractedText, confidence);
+      
+      // Clear canvas after submission
       canvasRef.current?.clearCanvas();
-      await runOCR(dataURL);
-      // If you still want to download the PNG, uncomment:
-      // const link = Object.assign(document.createElement('a'), {
-      //   href: dataURL, download: 'sketch.png', style: { display: 'none' }
-      // });
-      // document.body.appendChild(link); link.click(); link.remove();
     }
   }
 
@@ -130,6 +150,8 @@ export function DrawingCanvas({ onSubmit, submitButtonText = "Submit" }: Drawing
 
         // 2) Fallback: export PNG and run Tesseract on the rasterized image
         const dataURL = await canvasRef.current?.exportImage("png");
+
+    }
 
   return (
     <div className="drawing-canvas-container">

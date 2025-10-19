@@ -1,0 +1,80 @@
+.level-up-modal {
+  background: white;
+  border-radius: 16px;
+  padding: 3rem;
+  max-width: 500px;
+  text-align: center;
+  position: relative;
+  animation: scaleIn 0.3s ease-out;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.confetti {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  animation: bounce 0.6s ease-out;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+.level-up-modal h1 {
+  margin: 0 0 1.5rem;
+  font-size: 2.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.level-badge {
+  display: inline-block;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 700;
+  border-radius: 50px;
+  margin-bottom: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  box-shadow: 0 4px 6px rgba(102, 126, 234, 0.3);
+}
+
+.congrats-message {
+  font-size: 1.2rem;
+  color: var(--text-primary);
+  margin: 0 0 1rem;
+  line-height: 1.6;
+}
+
+.motivational-text {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin: 0 0 2rem;
+  line-height: 1.6;
+}
+
+.level-up-modal .btn-primary {
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  border-radius: 8px;
+}
+

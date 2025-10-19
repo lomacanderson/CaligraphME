@@ -4,6 +4,7 @@ import { useUserStore } from '@/stores/userStore';
 import { StoryGenerationModal } from '@/components/story/StoryGenerationModal';
 import { storyApi } from '@/services/api/story.api';
 import { StoryGenerationRequest } from '@shared/types';
+import logoFull from '@/components/icons/CalligraphMELogoFull-removebg.png';
 
 export function HomePage() {
   const { user } = useUserStore();
@@ -27,21 +28,18 @@ export function HomePage() {
   return (
     <div className="home-page">
       <section className="hero">
+        <img src={logoFull} alt="CalligraphME Logo" className="home-logo" />
         {user && <h2 className="greeting">Hi {user.username}! 👋</h2>}
         <h1 className="big-title">What do you want to do today?</h1>
       </section>
 
       <section className="main-options">
-        <div className="fun-option-card create-card" onClick={() => setShowModal(true)}>
-          <div className="big-emoji">✨</div>
-          <h2>Create New Story</h2>
-          <div className="action-button">Let's Go!</div>
-        </div>
+        <button className="home-button create-button" onClick={() => setShowModal(true)}>
+          ✨ Create New Story
+        </button>
 
-        <Link to="/stories" className="fun-option-card browse-card">
-          <div className="big-emoji">📚</div>
-          <h2>Practice Stories</h2>
-          <div className="action-button">Start Now!</div>
+        <Link to="/stories" className="home-button practice-button">
+          📚 Practice Stories
         </Link>
       </section>
 

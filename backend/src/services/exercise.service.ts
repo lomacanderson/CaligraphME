@@ -24,29 +24,37 @@ export class ExerciseService {
 
   static async submitCanvas(exerciseId: string, requestData: any) {
     try {
-      const { canvasData, expectedText, sourceLanguage, targetLanguage } = requestData;
+      const { 
+        canvasData, 
+        expectedText, 
+        sourceLanguage, 
+        targetLanguage, 
+        extractedText, 
+        ocrConfidence 
+      } = requestData;
       
       // Generate submission ID
       const submissionId = uuidv4();
       
-      // PLACEHOLDER: For now, we'll mock the OCR extraction
-      // In the future, this will call OCRService.processImage()
-      const extractedText = this.mockOCRExtraction(expectedText);
-      const ocrConfidence = 0.92; // Mock confidence score
-
-      console.log('Canvas submitted:', {
+      // Use the REAL OCR text extracted on the frontend (Tesseract or Handwriting API)
+      const finalExtractedText = extractedText || '';
+      const finalConfidence = ocrConfidence || 0.5;
+      
+      console.log('✅ Canvas submitted with REAL OCR:', {
         exerciseId,
         submissionId,
-        extractedText,
-        expectedText
+        extractedText: finalExtractedText,
+        expectedText,
+        confidence: finalConfidence,
+        source: extractedText ? 'Frontend OCR (Tesseract/Handwriting API)' : 'No OCR'
       });
       
       // Return OCR result for the next step (grading)
       return {
         submissionId,
-        extractedText,
-        confidence: ocrConfidence,
-        needsReview: ocrConfidence < 0.7,
+        extractedText: finalExtractedText,
+        confidence: finalConfidence,
+        needsReview: finalConfidence < 0.7,
       };
     } catch (error) {
       console.error('Error submitting canvas:', error);
@@ -57,31 +65,6 @@ export class ExerciseService {
   static async updateExerciseStatus(id: string, status: string) {
     // TODO: Implement update exercise status
     throw new Error('Not implemented');
-  }
-
-  // PLACEHOLDER: Mock OCR extraction
-  // This simulates OCR by introducing small variations to the expected text
-  private static mockOCRExtraction(expectedText: string): string {
-    // For now, return the expected text with high accuracy
-    // You can add variations for testing: small typos, case changes, etc.
-    
-    // Simulate 90% accuracy - occasionally introduce a small variation
-    const shouldIntroduceError = Math.random() < 0.1;
-    
-    if (shouldIntroduceError && expectedText.length > 5) {
-      // Replace a random character with a similar one
-      const pos = Math.floor(Math.random() * expectedText.length);
-      const variations: Record<string, string> = {
-        'a': 'á', 'e': 'é', 'i': 'í', 'o': 'ó', 'u': 'ú',
-        'A': 'Á', 'E': 'É', 'I': 'Í', 'O': 'Ó', 'U': 'Ú',
-      };
-      
-      const char = expectedText[pos];
-      const variation = variations[char] || char;
-      return expectedText.substring(0, pos) + variation + expectedText.substring(pos + 1);
-    }
-    
-    return expectedText;
   }
 }
 

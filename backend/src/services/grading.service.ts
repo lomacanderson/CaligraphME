@@ -1,18 +1,15 @@
 import { GeminiService } from './ai/gemini.service.js';
 import { HandwritingGraderService } from './handwriting-grader.service.js';
 import { TranslationGraderService } from './translation-grader.service.js';
+import { SupabaseService } from './database/supabase.service.js';
+import { UserService } from './user.service.js';
+import { RewardService } from './reward.service.js';
 
 export class GradingService {
   static async gradeSubmission(data: any) {
-    // TODO: Implement comprehensive grading logic
-    // 1. Grade handwriting quality
-    // 2. Grade translation accuracy
-    // 3. Combine results
-    // 4. Generate feedback
-    // 5. Calculate points
-    // 6. Save grading results
-    
     try {
+      const startTime = Date.now();
+      
       // Step 1: Grade handwriting (OCR confidence, legibility, penmanship)
       const handwritingGrade = await HandwritingGraderService.gradeHandwriting({
         canvasImage: data.canvasImage,
@@ -36,8 +33,62 @@ export class GradingService {
 
       // Step 5: Calculate points earned
       const pointsBreakdown = this.calculatePoints(handwritingGrade, translationGrade);
+      
+      const processingTime = Date.now() - startTime;
 
-      // Step 6: Build response
+      // Step 6: Save submission to database (if exerciseId and userId provided)
+      let savedSubmission = null;
+      if (data.exerciseId && data.userId) {
+        savedSubmission = await this.saveSubmission({
+          exerciseId: data.exerciseId,
+          canvasData: data.canvasData,
+          extractedText: data.extractedText,
+          handwritingGrade,
+          translationGrade,
+          overallScore,
+          feedback,
+          pointsBreakdown,
+          processingTime,
+        });
+
+        // Step 7: Update user points and progress
+        const pointsResult = await UserService.addPoints(
+          data.userId,
+          pointsBreakdown.totalPoints,
+          'Exercise submission'
+        );
+
+        // Step 8: Update user progress
+        const progress = await UserService.getUserProgress(data.userId);
+        await UserService.updateUserProgress(data.userId, {
+          sentences_completed: progress.sentencesCompleted + 1,
+          average_accuracy: this.calculateNewAverage(
+            progress.averageAccuracy,
+            progress.sentencesCompleted,
+            overallScore
+          ),
+        });
+
+        // Step 9: Check for achievements
+        const newAchievements = await RewardService.checkAndAwardAchievements(data.userId);
+
+        // Step 10: Build response with level-up info
+        return {
+          submissionId: savedSubmission.id,
+          handwritingGrade,
+          translationGrade,
+          overallScore,
+          feedback,
+          pointsEarned: pointsBreakdown.totalPoints,
+          breakdown: pointsBreakdown,
+          leveledUp: pointsResult.leveledUp,
+          newLevel: pointsResult.newLevel,
+          newAchievements,
+          user: pointsResult.user,
+        };
+      }
+
+      // Step 6 (fallback): Build response without saving
       return {
         submissionId: data.submissionId,
         handwritingGrade,
@@ -51,6 +102,60 @@ export class GradingService {
       console.error('Grading error:', error);
       throw new Error('Failed to grade submission');
     }
+  }
+
+  private static async saveSubmission(data: any) {
+    const supabase = SupabaseService.getClient();
+
+    const { data: submission, error } = await supabase
+      .from('submissions')
+      .insert({
+        exercise_id: data.exerciseId,
+        canvas_data: data.canvasData,
+        extracted_text: data.extractedText,
+        
+        // Handwriting scores
+        handwriting_overall_score: data.handwritingGrade.overallScore,
+        handwriting_legibility_score: data.handwritingGrade.legibilityScore,
+        handwriting_confidence_score: data.handwritingGrade.confidenceScore,
+        handwriting_penmanship_score: data.handwritingGrade.penmanshipScore,
+        handwriting_needs_review: data.handwritingGrade.needsReview,
+        handwriting_issues: data.handwritingGrade.issues,
+        
+        // Translation scores
+        translation_overall_score: data.translationGrade.overallScore,
+        translation_is_correct: data.translationGrade.isCorrect,
+        translation_semantic_score: data.translationGrade.semanticScore,
+        translation_grammar_score: data.translationGrade.grammarScore,
+        translation_vocabulary_score: data.translationGrade.vocabularyScore,
+        translation_spelling_score: data.translationGrade.spellingScore,
+        translation_errors: data.translationGrade.errors,
+        
+        // Overall
+        overall_score: data.overallScore,
+        feedback: data.feedback,
+        
+        // Points
+        handwriting_points: data.pointsBreakdown.handwritingPoints,
+        translation_points: data.pointsBreakdown.translationPoints,
+        bonus_points: data.pointsBreakdown.bonusPoints,
+        total_points: data.pointsBreakdown.totalPoints,
+        
+        processing_time: data.processingTime,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error saving submission:', error);
+      throw new Error('Failed to save submission');
+    }
+
+    return submission;
+  }
+
+  private static calculateNewAverage(currentAvg: number, count: number, newScore: number): number {
+    return ((currentAvg * count) + newScore) / (count + 1);
   }
 
   private static calculateOverallScore(handwriting: any, translation: any): number {

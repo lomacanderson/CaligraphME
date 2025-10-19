@@ -35,6 +35,10 @@ export const POINTS = {
   STORY_COMPLETED: 500,
   DAILY_BONUS: 50,
   STREAK_MULTIPLIER: 1.1,
+  // Grading system points (max 110 per submission)
+  MAX_HANDWRITING: 40,
+  MAX_TRANSLATION: 60,
+  PERFECT_BONUS: 10,
 } as const;
 
 export const ACCURACY_THRESHOLDS = {
@@ -42,6 +46,21 @@ export const ACCURACY_THRESHOLDS = {
   GOOD: 80,
   NEEDS_IMPROVEMENT: 60,
   TRY_AGAIN: 0,
+} as const;
+
+// Level thresholds - points needed to reach each level
+export const LEVEL_THRESHOLDS = {
+  BEGINNER: 0,
+  INTERMEDIATE: 1000,
+  ADVANCED: 5000,
+} as const;
+
+// Achievement milestones
+export const ACHIEVEMENT_MILESTONES = {
+  SENTENCES: [1, 10, 50, 100, 250],
+  STORIES: [1, 5, 10, 25, 50],
+  STREAK_DAYS: [3, 7, 14, 30, 60],
+  TOTAL_POINTS: [500, 1000, 2500, 5000, 10000],
 } as const;
 
 export const AGE_RANGES = [

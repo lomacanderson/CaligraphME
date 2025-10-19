@@ -6,19 +6,22 @@ import { exerciseApi } from '@/services/api/exercise.api';
 import { gradingApi } from '@/services/api/grading.api';
 import { DrawingCanvas } from '@/components/canvas/DrawingCanvas';
 import { FeedbackDisplay } from '@/components/exercise/FeedbackDisplay';
+import { LevelUpModal } from '@/components/rewards/LevelUpModal';
 import { useUserStore } from '@/stores/userStore';
 import './StoryPage.css';
 
 export function StoryPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { user, updatePoints } = useUserStore();
+  const { user, updatePoints, setUser } = useUserStore();
   const [story, setStory] = useState<Story | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentSentenceIndex, setCurrentSentenceIndex] = useState(0);
   const [feedback, setFeedback] = useState<GradingResponse | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showLevelUp, setShowLevelUp] = useState(false);
+  const [levelUpData, setLevelUpData] = useState<{ newLevel: string; totalPoints: number } | null>(null);
 
   useEffect(() => {
     if (id) {
@@ -56,7 +59,7 @@ export function StoryPage() {
     }
   };
 
-  const handleSubmit = async (imageData: string) => {
+  const handleSubmit = async (imageData: string, extractedText?: string, confidence?: number) => {
     if (!story || !user) {
       alert('Please complete user setup to submit your work.');
       return;
@@ -67,8 +70,15 @@ export function StoryPage() {
     setFeedback(null);
     
     try {
-      // Step 1: Submit canvas and extract text (with placeholder OCR)
-      console.log('Submitting drawing for sentence:', currentSentence.id);
+      console.log('📝 Submitting drawing for sentence:', currentSentence.id);
+      console.log('🔍 OCR extracted text:', extractedText || '(none)');
+      console.log('📊 OCR confidence:', confidence || 'N/A');
+      
+      // Use real OCR text from DrawingCanvas (Tesseract/Handwriting API)
+      const ocrText = extractedText || '';
+      const ocrConfidence = confidence || 0.5;
+      
+      // Step 1: Submit canvas with REAL OCR text (no backend OCR needed!)
       const submissionResult = await exerciseApi.submitCanvas(currentSentence.id, {
         exerciseId: currentSentence.id,
         canvasData: imageData,
@@ -76,10 +86,12 @@ export function StoryPage() {
         expectedText: currentSentence.textOriginal,
         sourceLanguage: user.nativeLanguage,
         targetLanguage: user.targetLanguage,
+        extractedText: ocrText,  // Real OCR from frontend!
+        ocrConfidence: ocrConfidence,
       } as any);
 
       
-      console.log('OCR extraction result:', submissionResult);
+      console.log('✅ Submission result:', submissionResult);
       
       // Step 2: Grade the submission
       const gradingResult = await gradingApi.gradeSubmission({
@@ -101,6 +113,20 @@ export function StoryPage() {
       // Update user points
       if (gradingResult.pointsEarned > 0) {
         updatePoints(gradingResult.pointsEarned);
+      }
+      
+      // Check for level up
+      if (gradingResult.leveledUp && gradingResult.newLevel) {
+        setLevelUpData({
+          newLevel: gradingResult.newLevel,
+          totalPoints: gradingResult.user?.totalPoints || user.totalPoints + gradingResult.pointsEarned,
+        });
+        setShowLevelUp(true);
+        
+        // Update user with new level
+        if (gradingResult.user) {
+          setUser(gradingResult.user);
+        }
       }
       
     } catch (error: any) {
@@ -286,6 +312,15 @@ export function StoryPage() {
           )}
         </div>
       </div>
+      
+      {/* Level Up Modal */}
+      {showLevelUp && levelUpData && (
+        <LevelUpModal
+          newLevel={levelUpData.newLevel}
+          totalPoints={levelUpData.totalPoints}
+          onClose={() => setShowLevelUp(false)}
+        />
+      )}
     </div>
   );
 }

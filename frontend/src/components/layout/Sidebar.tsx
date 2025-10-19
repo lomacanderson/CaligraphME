@@ -36,6 +36,14 @@ export function Sidebar({ isOpen }: SidebarProps) {
           <span className="nav-icon">📚</span>
           <span className="nav-text">Stories</span>
         </Link>
+        <Link 
+          to="/rewards" 
+          className={`nav-item ${isActive('/rewards') ? 'active' : ''}`}
+          title="Rewards"
+        >
+          <span className="nav-icon">🏆</span>
+          <span className="nav-text">Rewards</span>
+        </Link>
       </nav>
     </aside>
   );

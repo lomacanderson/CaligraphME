@@ -7,6 +7,7 @@ import { StoryPage } from './pages/StoryPage';
 import { ExercisePage } from './pages/ExercisePage';
 import { WritingPage } from './pages/WritingPage';
 import { ProfilePage } from './pages/ProfilePage';
+import { RewardsPage } from './pages/RewardsPage';
 import { UserSetupModal } from './components/user/UserSetupModal';
 import { useUserStore } from './stores/userStore';
 
@@ -37,6 +38,7 @@ function App() {
           <Route path="/stories/:id" element={<StoryPage />} />
           <Route path="/exercise/:id" element={<ExercisePage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/rewards" element={<RewardsPage />} />
         </Routes>
       </Layout>
     </Router>
