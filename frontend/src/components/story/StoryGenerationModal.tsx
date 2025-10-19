@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { StoryTheme, LanguageLevel, SupportedLanguage, StoryGenerationRequest } from '@shared/types';
 import { voiceApi, Voice } from '@/services/api/voice.api';
+import { CustomVoiceAPI, CustomVoice } from '@/services/api/custom-voice.api';
+import { CustomVoiceManager } from '../voice/CustomVoiceManager';
 import './StoryGenerationModal.css';
 
 interface StoryGenerationModalProps {
@@ -21,7 +23,11 @@ export function StoryGenerationModal({
   const [useCustomPrompt, setUseCustomPrompt] = useState(false);
   const [customPrompt, setCustomPrompt] = useState('');
   const [availableVoices, setAvailableVoices] = useState<Voice[]>([]);
+  const [customVoices, setCustomVoices] = useState<CustomVoice[]>([]);
   const [selectedVoice, setSelectedVoice] = useState<string>('');
+  const [selectedCustomVoice, setSelectedCustomVoice] = useState<string>('');
+  const [useCustomVoice, setUseCustomVoice] = useState(false);
+  const [showCustomVoiceManager, setShowCustomVoiceManager] = useState(false);
   const [formData, setFormData] = useState<StoryGenerationRequest>({
     language: userLanguage || 'es',
     level: userLevel || LanguageLevel.BEGINNER,
@@ -36,6 +42,7 @@ export function StoryGenerationModal({
   useEffect(() => {
     if (isOpen) {
       loadVoices();
+      loadCustomVoices();
     }
   }, [isOpen, formData.level]);
 
@@ -43,11 +50,23 @@ export function StoryGenerationModal({
     try {
       const voices = await voiceApi.getAvailableVoices(formData.level);
       setAvailableVoices(voices);
-      if (voices.length > 0 && !selectedVoice) {
+      if (voices.length > 0 && !selectedVoice && !useCustomVoice) {
         setSelectedVoice(voices[0].id); // Set first voice as default
       }
     } catch (error) {
       console.error('Failed to load voices:', error);
+    }
+  };
+
+  const loadCustomVoices = async () => {
+    try {
+      const voices = await CustomVoiceAPI.getCustomVoices();
+      setCustomVoices(voices);
+      if (voices.length > 0 && !selectedCustomVoice && useCustomVoice) {
+        setSelectedCustomVoice(voices[0].id); // Set first custom voice as default
+      }
+    } catch (error) {
+      console.error('Failed to load custom voices:', error);
     }
   };
 
@@ -62,7 +81,7 @@ export function StoryGenerationModal({
       const request: StoryGenerationRequest = {
         ...formData,
         customPrompt: useCustomPrompt ? customPrompt : undefined,
-        voiceId: selectedVoice,
+        voiceId: useCustomVoice ? selectedCustomVoice : selectedVoice,
       };
       
       await onGenerate(request);
@@ -189,24 +208,74 @@ export function StoryGenerationModal({
           </div>
 
           <div className="form-section">
-            <label htmlFor="voice">Voice for Audio 🔊</label>
-            <select
-              id="voice"
-              value={selectedVoice}
-              onChange={(e) => setSelectedVoice(e.target.value)}
-              className="form-select"
-              disabled={availableVoices.length === 0}
-            >
-              {availableVoices.map((voice) => (
-                <option key={voice.id} value={voice.id}>
-                  {voice.name} - {voice.description} ({voice.gender})
-                </option>
-              ))}
-            </select>
-            <p className="form-hint">
-              Choose the voice that will narrate your story. Recommended voices are shown first.
-            </p>
+            <label className="form-toggle">
+              <input
+                type="checkbox"
+                checked={useCustomVoice}
+                onChange={(e) => {
+                  setUseCustomVoice(e.target.checked);
+                  if (e.target.checked) {
+                    loadCustomVoices();
+                  }
+                }}
+              />
+              <span>Use Custom Voice 🎤</span>
+            </label>
           </div>
+
+          {useCustomVoice ? (
+            <div className="form-section">
+              <label htmlFor="customVoice">Custom Voice for Audio 🎤</label>
+              {customVoices.length > 0 ? (
+                <select
+                  id="customVoice"
+                  value={selectedCustomVoice}
+                  onChange={(e) => setSelectedCustomVoice(e.target.value)}
+                  className="form-select"
+                >
+                  {customVoices.map((voice) => (
+                    <option key={voice.id} value={voice.id}>
+                      {voice.name} - {voice.category} {voice.description && `(${voice.description})`}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <div className="no-custom-voices">
+                  <p>No custom voices available. Create one to get started!</p>
+                  <button
+                    type="button"
+                    className="btn-secondary"
+                    onClick={() => setShowCustomVoiceManager(true)}
+                  >
+                    Manage Custom Voices
+                  </button>
+                </div>
+              )}
+              <p className="form-hint">
+                Use your own custom voice to narrate the story. Perfect for family stories!
+              </p>
+            </div>
+          ) : (
+            <div className="form-section">
+              <label htmlFor="voice">Voice for Audio 🔊</label>
+              <select
+                id="voice"
+                value={selectedVoice}
+                onChange={(e) => setSelectedVoice(e.target.value)}
+                className="form-select"
+                disabled={availableVoices.length === 0}
+              >
+                {availableVoices.map((voice) => (
+                  <option key={voice.id} value={voice.id}>
+                    {voice.name} - {voice.description} ({voice.gender})
+                  </option>
+                ))}
+              </select>
+              <p className="form-hint">
+                Choose the voice that will narrate your story. Recommended voices are shown first.
+              </p>
+            </div>
+          )}
 
           <div className="form-row">
             <div className="form-section">
@@ -280,6 +349,29 @@ export function StoryGenerationModal({
             </button>
           </div>
         </form>
+
+        {showCustomVoiceManager && (
+          <div className="custom-voice-manager-modal">
+            <div className="custom-voice-manager-header">
+              <h3>🎤 Manage Custom Voices</h3>
+              <button 
+                className="modal-close"
+                onClick={() => setShowCustomVoiceManager(false)}
+              >
+                ×
+              </button>
+            </div>
+            <div className="custom-voice-manager-content">
+              <CustomVoiceManager
+                onVoiceSelect={(voiceId) => {
+                  setSelectedCustomVoice(voiceId);
+                  setShowCustomVoiceManager(false);
+                }}
+                selectedVoiceId={selectedCustomVoice}
+              />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

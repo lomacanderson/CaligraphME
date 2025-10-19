@@ -307,6 +307,9 @@ export class StoryService {
   private static async generateAudioForSentences(sentencesData: any[], storyId: string, voiceId: string = 'JBFqnCBsd6RMkjVDRZzb'): Promise<void> {
     console.log(`🎵 Generating audio for ${sentencesData.length} sentences in story ${storyId}...`);
     
+    // Check if this is a custom voice (UUID format) or ElevenLabs voice ID
+    const isCustomVoice = voiceId.length > 20; // Custom voices are typically longer UUIDs
+    
     // Ensure the audio bucket exists
     try {
       await SupabaseService.createBucket('audio-files');
@@ -327,11 +330,23 @@ export class StoryService {
           fs.mkdirSync(tempDir, { recursive: true });
         }
         
-        // Generate audio using ElevenLabs with selected voice
-        await textToAudio(sentence.text_original, audioFilePath, voiceId);
+        let audioBuffer: Buffer;
         
-        // Read the generated audio file
-        const audioBuffer = fs.readFileSync(audioFilePath);
+        if (isCustomVoice) {
+          // This is a custom voice - use the custom voice service
+          console.log(`🎤 Using custom voice: ${voiceId}`);
+          const { CustomVoiceService } = await import('./custom-voice.service.js');
+          audioBuffer = await CustomVoiceService.generateAudioWithCustomVoice(
+            voiceId,
+            'system', // We'll need to get the actual user ID from context
+            sentence.text_original
+          );
+        } else {
+          // This is a standard ElevenLabs voice
+          console.log(`🔊 Using ElevenLabs voice: ${voiceId}`);
+          await textToAudio(sentence.text_original, audioFilePath, voiceId);
+          audioBuffer = fs.readFileSync(audioFilePath);
+        }
         
         // Upload to Supabase Storage
         const storagePath = `stories/${storyId}/${audioFileName}`;

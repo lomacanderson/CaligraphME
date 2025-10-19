@@ -27,3 +27,4 @@ export function LevelUpModal({ newLevel, totalPoints, onClose }: LevelUpModalPro
   );
 }
 
+

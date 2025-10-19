@@ -179,11 +179,6 @@
   color: var(--text-primary);
   line-height: 1.4;
   flex: 1;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  word-break: break-word;
 }
 
 .story-meta {

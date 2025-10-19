@@ -5,6 +5,7 @@ import { router as gradingRouter } from './grading.routes.js';
 import { router as rewardRouter } from './reward.routes.js';
 import { router as userRouter } from './user.routes.js';
 import { router as ocrRouter } from './ocr.routes.js';
+import { router as customVoiceRouter } from './custom-voice.routes.js';
 
 export const router = Router();
 
@@ -15,6 +16,7 @@ router.use('/grading', gradingRouter);
 router.use('/rewards', rewardRouter);
 router.use('/users', userRouter);
 router.use('/ocr', ocrRouter);
+router.use('/custom-voices', customVoiceRouter);
 
 // API info
 router.get('/', (req, res) => {
@@ -28,6 +30,7 @@ router.get('/', (req, res) => {
       rewards: '/api/rewards',
       users: '/api/users',
       ocr: '/api/ocr',
+      customVoices: '/api/custom-voices',
     },
   });
 });
