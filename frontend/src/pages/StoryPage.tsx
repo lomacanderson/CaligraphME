@@ -96,13 +96,10 @@ export function StoryPage() {
 
   return (
     <div className="story-page">
-      <div className="story-header">
-        <h1 className="story-title">{story.title}</h1>
-      </div>
-
       <div className="story-content">
         <div className="story-book">
           <div className="story-progress">
+            <h1 className="story-title">{story.title}</h1>
             <div className="progress-bar">
               <div 
                 className="progress-fill" 

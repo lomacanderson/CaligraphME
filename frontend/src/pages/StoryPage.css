@@ -49,17 +49,13 @@
   margin-bottom: 2rem;
 }
 
-/* Story Header */
-.story-header {
-  margin-bottom: 2rem;
-  text-align: center;
-}
-
 .story-title {
-  font-size: 2.5rem;
+  font-size: 1.5rem;
   color: var(--text-primary);
   margin: 0;
   font-weight: 800;
+  white-space: nowrap;
+  margin-right: 1.5rem;
 }
 
 /* Story Content Layout */
@@ -290,6 +286,14 @@
   .story-progress {
     margin-bottom: 1.5rem;
     padding-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .story-title {
+    font-size: 1.25rem;
+    width: 100%;
+    margin-bottom: 0.75rem;
+    margin-right: 0;
   }
 
   .progress-text {
