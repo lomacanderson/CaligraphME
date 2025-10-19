@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useUserStore } from '@/stores/userStore';
+import { userApi } from '@/services/api/user.api';
 import BeginnerBadge from '@/components/icons/Beginner Trophy Badge.png';
 import IntermediateBadge from '@/components/icons/Intermediate Trophy Badge.png';
 import MasterBadge from '@/components/icons/Master Trophy Badge.png';
@@ -7,6 +8,7 @@ import MasterBadge from '@/components/icons/Master Trophy Badge.png';
 export function ProfilePage() {
   const { user, setUser } = useUserStore();
   const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [isCreatingUser, setIsCreatingUser] = useState(false);
 
   if (!user) {
     return (
@@ -35,6 +37,34 @@ export function ProfilePage() {
     } else {
       setShowResetConfirm(true);
       setTimeout(() => setShowResetConfirm(false), 3000);
+    }
+  };
+
+  const handleTestCreateUser = async () => {
+    setIsCreatingUser(true);
+    try {
+      const timestamp = Date.now();
+      const testUser = {
+        email: `test${timestamp}@caligraphme.com`,
+        username: `TestUser${timestamp}`,
+        firstName: 'Test',
+        lastName: 'User',
+        age: 25,
+        nativeLanguage: 'en',
+        targetLanguage: 'es',
+        level: 'beginner',
+      };
+
+      console.log('🧪 Testing user creation with:', testUser);
+      const createdUser = await userApi.createUser(testUser);
+      console.log('✅ User created successfully in database:', createdUser);
+      
+      alert(`Success! User created in database:\n\nID: ${createdUser.id}\nUsername: ${createdUser.username}\nEmail: ${createdUser.email}\nPoints: ${createdUser.totalPoints}\nLevel: ${createdUser.level}`);
+    } catch (error: any) {
+      console.error('❌ Error creating user:', error);
+      alert(`Failed to create user: ${error.message || 'Unknown error'}`);
+    } finally {
+      setIsCreatingUser(false);
     }
   };
 
@@ -76,6 +106,14 @@ export function ProfilePage() {
       </div>
 
       <div className="profile-actions">
+        <button 
+          className="btn-primary"
+          onClick={handleTestCreateUser}
+          disabled={isCreatingUser}
+        >
+          {isCreatingUser ? "Creating..." : "🧪 Test Create User (Backend)"}
+        </button>
+        
         <button 
           className={showResetConfirm ? "btn-danger" : "btn-secondary"}
           onClick={handleResetProfile}

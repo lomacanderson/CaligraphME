@@ -114,6 +114,11 @@
   gap: 1.5rem;
 }
 
+/* Story Card Wrapper */
+.story-card-wrapper {
+  position: relative;
+}
+
 /* Story Card */
 .story-card {
   background-color: var(--bg-primary);
@@ -174,6 +179,11 @@
   color: var(--text-primary);
   line-height: 1.4;
   flex: 1;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  word-break: break-word;
 }
 
 .story-meta {
@@ -192,7 +202,8 @@
 
 .story-footer {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
   padding-top: 0.75rem;
   border-top: 1px solid var(--border-color);
 }
@@ -204,6 +215,27 @@
   font-size: 0.75rem;
   font-weight: 600;
   color: var(--text-secondary);
+}
+
+.btn-delete-story {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  transition: all 0.2s;
+  opacity: 0.6;
+}
+
+.btn-delete-story:hover {
+  opacity: 1;
+  background-color: rgba(255, 59, 48, 0.1);
+  transform: scale(1.1);
+}
+
+.btn-delete-story:active {
+  transform: scale(0.95);
 }
 
 /* Responsive */

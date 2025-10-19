@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { storyApi } from '@/services/api/story.api';
 import { Story, StoryGenerationRequest, StoryTheme, LanguageLevel } from '@shared/types';
 import { StoryGenerationModal } from '@/components/story/StoryGenerationModal';
+import { ConfirmationModal } from '@/components/common/ConfirmationModal';
 import { useUserStore } from '@/stores/userStore';
 import './StoryListPage.css';
 
@@ -15,6 +16,15 @@ export function StoryListPage() {
     language: 'all',
     level: 'all',
     theme: 'all',
+  });
+  const [deleteConfirmation, setDeleteConfirmation] = useState<{
+    isOpen: boolean;
+    storyId: string | null;
+    storyTitle: string | null;
+  }>({
+    isOpen: false,
+    storyId: null,
+    storyTitle: null,
   });
   
   const user = useUserStore((state) => state.user);
@@ -51,6 +61,46 @@ export function StoryListPage() {
       console.error('Failed to generate story:', error);
       throw error;
     }
+  };
+
+  const handleDeleteClick = (e: React.MouseEvent, storyId: string, storyTitle: string) => {
+    e.preventDefault(); // Prevent navigation to story page
+    e.stopPropagation();
+    
+    setDeleteConfirmation({
+      isOpen: true,
+      storyId,
+      storyTitle,
+    });
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deleteConfirmation.storyId) return;
+
+    try {
+      await storyApi.deleteStory(deleteConfirmation.storyId);
+      // Remove from list
+      setStories(prev => prev.filter(story => story.id !== deleteConfirmation.storyId));
+      console.log(`✅ Story "${deleteConfirmation.storyTitle}" deleted successfully`);
+      
+      // Close modal
+      setDeleteConfirmation({
+        isOpen: false,
+        storyId: null,
+        storyTitle: null,
+      });
+    } catch (error: any) {
+      console.error('Failed to delete story:', error);
+      alert(`Failed to delete story: ${error.message || 'Unknown error'}`);
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteConfirmation({
+      isOpen: false,
+      storyId: null,
+      storyTitle: null,
+    });
   };
 
   const getThemeEmoji = (theme: string) => {
@@ -151,28 +201,37 @@ export function StoryListPage() {
           </div>
         ) : (
           stories.map((story) => (
-            <Link key={story.id} to={`/stories/${story.id}`} className="story-card">
-              <div className="story-card-header">
-                <span className="story-theme-emoji">{getThemeEmoji(story.theme)}</span>
-                <span className={`story-level level-${story.level}`}>
-                  {story.level}
-                </span>
-              </div>
-              <h3 className="story-title">{story.title}</h3>
-              <div className="story-meta">
-                <span className="meta-item">
-                  📖 {story.sentences?.length || 0} sentences
-                </span>
-                <span className="meta-item">
-                  ⏱️ {story.estimatedDuration} min
-                </span>
-              </div>
-              <div className="story-footer">
-                <span className="story-language">
-                  {story.language.toUpperCase()}
-                </span>
-              </div>
-            </Link>
+            <div key={story.id} className="story-card-wrapper">
+              <Link to={`/stories/${story.id}`} className="story-card">
+                <div className="story-card-header">
+                  <span className="story-theme-emoji">{getThemeEmoji(story.theme)}</span>
+                  <span className={`story-level level-${story.level}`}>
+                    {story.level}
+                  </span>
+                </div>
+                <h3 className="story-title">{story.title}</h3>
+                <div className="story-meta">
+                  <span className="meta-item">
+                    📖 {story.sentences?.length || 0} sentences
+                  </span>
+                  <span className="meta-item">
+                    ⏱️ {story.estimatedDuration} min
+                  </span>
+                </div>
+                <div className="story-footer">
+                  <span className="story-language">
+                    {story.language.toUpperCase()}
+                  </span>
+                  <button 
+                    className="btn-delete-story"
+                    onClick={(e) => handleDeleteClick(e, story.id, story.title)}
+                    title="Delete story"
+                  >
+                    🗑️
+                  </button>
+                </div>
+              </Link>
+            </div>
           ))
         )}
       </div>
@@ -183,6 +242,17 @@ export function StoryListPage() {
         onGenerate={handleGenerateStory}
         userLanguage={user?.targetLanguage}
         userLevel={user?.level}
+      />
+
+      <ConfirmationModal
+        isOpen={deleteConfirmation.isOpen}
+        title="Delete Story?"
+        message={`Are you sure you want to delete "${deleteConfirmation.storyTitle}"?\n\nThis action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        onConfirm={handleDeleteConfirm}
+        onCancel={handleDeleteCancel}
+        isDangerous={true}
       />
     </div>
   );
