@@ -21,10 +21,8 @@
     "paths": {
       "@/*": ["./src/*"],
       "@shared/*": ["../shared/src/*"],
-      "@shared/types/*": ["../shared/dist/*"]
     }
   },
-  "references": [{ "path": "../shared" }],
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
 }
