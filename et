@@ -1,0 +1,263 @@
+[33mcommit 8d942e7f6f6ff75a2f008700f3273c17bbbbf7e3[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: DavidFalade04 <62578996+DavidFalade04@users.noreply.github.com>
+Date:   Sun Oct 19 04:37:34 2025 -0700
+
+    fix tsconfig iss
+
+[33mcommit 69bf0789dd764f318b0ede760c3928937472135c[m
+Merge: f0378ce 82dad76
+Author: DavidFalade04 <62578996+DavidFalade04@users.noreply.github.com>
+Date:   Sun Oct 19 04:05:03 2025 -0700
+
+    Merge branch 'main' of https://github.com/lomacanderson/CaligraphME
+
+[33mcommit f0378ce5fc371d487a865f323824fad337f31cd2[m
+Author: DavidFalade04 <62578996+DavidFalade04@users.noreply.github.com>
+Date:   Sun Oct 19 04:04:50 2025 -0700
+
+    david's recent
+
+[33mcommit 82dad766482fc77125b582ffa8e044019d22750b[m
+Author: lomacanderson <voiceoverlogan@gmail.com>
+Date:   Sun Oct 19 02:45:24 2025 -0700
+
+    undo commit 0f43024
+
+[33mcommit 17a45eed7c63d4a94eb270433148c753b8aaf0cf[m
+Author: lomacanderson <voiceoverlogan@gmail.com>
+Date:   Sun Oct 19 02:41:04 2025 -0700
+
+    Merge branch 'main' of https://github.com/lomacanderson/CaligraphME
+
+[33mcommit e172e43a4a01ca751668b838c84405c03485d619[m
+Merge: f8cfaac ac2f1c2
+Author: lomacanderson <voiceoverlogan@gmail.com>
+Date:   Sun Oct 19 02:40:19 2025 -0700
+
+    Merge branch 'main' of https://github.com/lomacanderson/CaligraphME
+
+[33mcommit f8cfaacae651d42fab25712df217be521782de0c[m
+Author: lomacanderson <voiceoverlogan@gmail.com>
+Date:   Sun Oct 19 02:38:46 2025 -0700
+
+    undo tsconfig changes
+
+[33mcommit ac2f1c24c69ae6e57f39fcb2e1cb723a01972eeb[m
+Author: lomacanderson <voiceoverlogan@gmail.com>
+Date:   Sun Oct 19 01:49:36 2025 -0700
+
+    attempt to fix TS6305
+
+[33mcommit 0f43024e7ecdaa466af30056891bbd51568955be[m
+Author: lomacanderson <voiceoverlogan@gmail.com>
+Date:   Sun Oct 19 01:40:50 2025 -0700
+
+    update tsconfig
+
+[33mcommit 11f94205adfbbd2c1243972d2f1ce5cf4cef4802[m
+Author: DavidFalade04 <62578996+DavidFalade04@users.noreply.github.com>
+Date:   Sun Oct 19 01:33:30 2025 -0700
+
+    user can choose voice
+
+[33mcommit 390700b4c2ba449c81f060249204aeaa4b980e55[m
+Author: DavidFalade04 <62578996+DavidFalade04@users.noreply.github.com>
+Date:   Sun Oct 19 01:25:32 2025 -0700
+
+    make audio genration blocking instead of async
+
+[33mcommit b8f7a1aa867359ad1100bb60bced300221b8862d[m
+Author: lomacanderson <voiceoverlogan@gmail.com>
+Date:   Sun Oct 19 01:24:37 2025 -0700
+
+    remove unused code
+
+[33mcommit 8ed1509f76184220d15b3c762c73cddd83dbd4a4[m
+Author: DavidFalade04 <62578996+DavidFalade04@users.noreply.github.com>
+Date:   Sun Oct 19 01:21:56 2025 -0700
+
+    audio should use bucket
+
+[33mcommit 1268a1c5df28d808d69628def9c78c93282561f6[m
+Author: lomacanderson <voiceoverlogan@gmail.com>
+Date:   Sun Oct 19 01:15:17 2025 -0700
+
+    fix build again
+
+[33mcommit 4584c7233401e624062eca1c9843106068a121d5[m
+Author: lomacanderson <voiceoverlogan@gmail.com>
+Date:   Sun Oct 19 01:12:26 2025 -0700
+
+    fix build
+
+[33mcommit da1bbe87bf7dd57ab4e40de2084b076cb35a8257[m
+Author: DavidFalade04 <62578996+DavidFalade04@users.noreply.github.com>
+Date:   Sun Oct 19 00:40:25 2025 -0700
+
+    add login in and registering
+
+[33mcommit 53d8a64f25d4d80336c657e696ec9d5d7d14458d[m
+Author: DavidFalade04 <62578996+DavidFalade04@users.noreply.github.com>
+Date:   Sun Oct 19 00:20:22 2025 -0700
+
+    replace story sentences with what the user wrote
+
+[33mcommit 4340df1dbe247beb96e4e6d90478ca6f1a1e18ae[m
+Author: DavidFalade04 <62578996+DavidFalade04@users.noreply.github.com>
+Date:   Sun Oct 19 00:15:28 2025 -0700
+
+    ui tweaks
+
+[33mcommit c189f4b08aa4c206058c097c48ce2fd285922530[m
+Merge: a943509 12d0a53
+Author: DavidFalade04 <62578996+DavidFalade04@users.noreply.github.com>
+Date:   Sat Oct 18 23:06:20 2025 -0700
+
+    Merge branch 'main' of https://github.com/lomacanderson/CaligraphME
+
+[33mcommit a943509f746cfe35ae4cef6954d016ddc220aedc[m
+Author: DavidFalade04 <62578996+DavidFalade04@users.noreply.github.com>
+Date:   Sat Oct 18 23:05:50 2025 -0700
+
+    add rewards and grader
+
+[33mcommit 12d0a5320847d4a86d3e20a34a383977e28afd5f[m
+Author: Megan <meganthielman@gmail.com>
+Date:   Sat Oct 18 22:38:37 2025 -0700
+
+    Name png
+
+[33mcommit ae1c97989771c0cb22b3a455b0055b21f259a96e[m
+Merge: c6f3d21 9dd0f0e
+Author: DavidFalade04 <62578996+DavidFalade04@users.noreply.github.com>
+Date:   Sat Oct 18 20:51:09 2025 -0700
+
+    Merge branch 'Meg's-Branch' of https://github.com/lomacanderson/CaligraphME
+
+[33mcommit c6f3d21a4479feb5b3fdd03e2ec81af05676f3fc[m
+Merge: 26a6196 1c7d896
+Author: DavidFalade04 <62578996+DavidFalade04@users.noreply.github.com>
+Date:   Sat Oct 18 20:40:03 2025 -0700
+
+    Merge branch 'drawtoimage' of https://github.com/lomacanderson/CaligraphME
+    
+    # Conflicts:
+    #       frontend/src/components/canvas/DrawingCanvas.tsx
+    #       package-lock.json
+
+[33mcommit 26a619639fa4639e54bf58917720ec4c25f09ff1[m
+Author: DavidFalade04 <62578996+DavidFalade04@users.noreply.github.com>
+Date:   Sat Oct 18 20:30:11 2025 -0700
+
+    integrate audio integration
+
+[33mcommit 1ab0d34cc2dff79176e24706dbddc5aa553ceb78[m
+Author: DavidFalade04 <62578996+DavidFalade04@users.noreply.github.com>
+Date:   Sat Oct 18 20:09:05 2025 -0700
+
+    push david's latest
+
+[33mcommit 1c7d896599ae2675095f0d6955bb8cc95481fd72[m[33m ([m[1;31morigin/drawtoimage[m[33m)[m
+Author: lomacanderson <voiceoverlogan@gmail.com>
+Date:   Sat Oct 18 19:52:59 2025 -0700
+
+    Add OCR to drawing pad
+
+[33mcommit 9dd0f0e5b4fb9499859838cc5bd8b458e3b27112[m[33m ([m[1;31morigin/Meg's-Branch[m[33m)[m
+Author: Megan <meganthielman@gmail.com>
+Date:   Sat Oct 18 19:15:30 2025 -0700
+
+    Icon and Full Logo
+
+[33mcommit ca65f135737ad1f4f5ede2295518d810d4882fc1[m
+Author: jwchehab <jwchehab@gmail.com>
+Date:   Sat Oct 18 19:10:33 2025 -0700
+
+    Added dictation service.
+
+[33mcommit 34271c947e802a63a4e9acce5431559cea9782ae[m
+Author: DavidFalade04 <62578996+DavidFalade04@users.noreply.github.com>
+Date:   Sat Oct 18 19:05:42 2025 -0700
+
+    mock ocr and grader
+
+[33mcommit bfab8944a40d41445a0f8771a2d3e45963b99de8[m
+Merge: d67552f 1eeef3a
+Author: DavidFalade04 <62578996+DavidFalade04@users.noreply.github.com>
+Date:   Sat Oct 18 18:09:03 2025 -0700
+
+    Merge branch 'Meg's-Branch' of https://github.com/lomacanderson/CaligraphME
+
+[33mcommit d67552f666c16e9cb0a208397751509bc7bf8f58[m
+Author: DavidFalade04 <62578996+DavidFalade04@users.noreply.github.com>
+Date:   Sat Oct 18 18:08:20 2025 -0700
+
+    move title to make more space
+
+[33mcommit bd2fb11500797e3da75fcfe5d321753ce2b7aa28[m
+Author: DavidFalade04 <62578996+DavidFalade04@users.noreply.github.com>
+Date:   Sat Oct 18 17:41:55 2025 -0700
+
+    more frontend improvements
+
+[33mcommit 1eeef3a8f10beb05e671c198b1824f3a703e6142[m
+Author: Megan <meganthielman@gmail.com>
+Date:   Sat Oct 18 17:21:14 2025 -0700
+
+    Added Icons
+
+[33mcommit ff075af374121307911fb9e713647a15bfd6ee41[m
+Author: DavidFalade04 <62578996+DavidFalade04@users.noreply.github.com>
+Date:   Sat Oct 18 17:07:05 2025 -0700
+
+    frontend improvements
+
+[33mcommit c25cb1f0d779c8b8a308ce8a0d9aee0a01561d29[m
+Merge: efb1305 9a36573
+Author: DavidFalade04 <62578996+DavidFalade04@users.noreply.github.com>
+Date:   Sat Oct 18 15:45:15 2025 -0700
+
+    Merge branch 'main' of https://github.com/lomacanderson/CaligraphME
+
+[33mcommit efb1305d7af417ea40d19a715e77264e27bbc60d[m
+Author: DavidFalade04 <62578996+DavidFalade04@users.noreply.github.com>
+Date:   Sat Oct 18 15:44:57 2025 -0700
+
+    commit docs
+
+[33mcommit 845bf8c5dfa50b4e5624d80a0ff9239458df8756[m
+Author: DavidFalade04 <62578996+DavidFalade04@users.noreply.github.com>
+Date:   Sat Oct 18 15:36:24 2025 -0700
+
+    fetch stories
+
+[33mcommit 9a365739ac3903d88b75f08c7f07460e495a6c62[m
+Merge: 62fd2b3 d669621
+Author: lomacanderson <voiceoverlogan@gmail.com>
+Date:   Sat Oct 18 15:24:39 2025 -0700
+
+    Merge branch 'main' of https://github.com/lomacanderson/CaligraphME
+
+[33mcommit 62fd2b3181cdaeef89246e3c145275715c1ce5b0[m
+Author: lomacanderson <voiceoverlogan@gmail.com>
+Date:   Sat Oct 18 15:19:53 2025 -0700
+
+    Added drawing pad
+
+[33mcommit d669621fd46cf5fb437e10de5be0bb8836f12d1f[m
+Author: DavidFalade04 <62578996+DavidFalade04@users.noreply.github.com>
+Date:   Sat Oct 18 15:13:24 2025 -0700
+
+    add story generation
+
+[33mcommit 002989a59fcc218345cc79f2d8279ba4743bbd4b[m
+Author: DavidFalade04 <62578996+DavidFalade04@users.noreply.github.com>
+Date:   Sat Oct 18 13:46:57 2025 -0700
+
+    supabase setup docs added
+
+[33mcommit abd4f0a06b454dc66564451883e256a2dbd6566a[m
+Author: DavidFalade04 <62578996+DavidFalade04@users.noreply.github.com>
+Date:   Sat Oct 18 13:06:16 2025 -0700
+
+    base skeleton
