@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Story } from '@shared/types';
 import { storyApi } from '@/services/api/story.api';
+import { DrawingCanvas } from '@/components/canvas/DrawingCanvas';
 import './StoryPage.css';
 
 export function StoryPage() {
@@ -34,9 +35,18 @@ export function StoryPage() {
     }
   };
 
-  const startExercise = (sentenceId: string) => {
-    // TODO: Create exercise and navigate
-    navigate(`/exercise/${sentenceId}`);
+  const handleSubmit = (imageData: string) => {
+    console.log('Submitting drawing for sentence:', currentSentence.id);
+    // TODO: Send to grading API
+    
+    // Move to next sentence
+    if (currentSentenceIndex < story!.sentences.length - 1) {
+      setCurrentSentenceIndex(currentSentenceIndex + 1);
+    } else {
+      // Story completed
+      alert('Great job! You completed the story! 🎉');
+      navigate('/stories');
+    }
   };
 
   if (loading) {
@@ -88,21 +98,22 @@ export function StoryPage() {
     <div className="story-page">
       <div className="story-header">
         <h1 className="story-title">{story.title}</h1>
-        <div className="progress-info">
-          <span className="progress-text">
-            Sentence {currentSentenceIndex + 1} of {story.sentences.length}
-          </span>
-          <div className="progress-bar">
-            <div 
-              className="progress-fill" 
-              style={{ width: `${((currentSentenceIndex + 1) / story.sentences.length) * 100}%` }}
-            />
-          </div>
-        </div>
       </div>
 
       <div className="story-content">
         <div className="story-book">
+          <div className="story-progress">
+            <div className="progress-bar">
+              <div 
+                className="progress-fill" 
+                style={{ width: `${((currentSentenceIndex + 1) / story.sentences.length) * 100}%` }}
+              />
+            </div>
+            <span className="progress-text">
+              {currentSentenceIndex + 1}/{story.sentences.length}
+            </span>
+          </div>
+          
           <div className="story-text">
             {story.sentences.map((sentence, index) => (
               <span
@@ -117,38 +128,20 @@ export function StoryPage() {
           </div>
         </div>
 
-        <div className="practice-panel">
-          <div className="practice-header">
-            <span className="practice-emoji">✍️</span>
-            <h3>Practice this sentence</h3>
-          </div>
-          <div className="current-sentence-display">
-            <p className="sentence-number">Sentence {currentSentenceIndex + 1}</p>
-            <p className="sentence-text">{currentSentence.textTranslated}</p>
-          </div>
-          <button 
-            className="btn-primary practice-button"
-            onClick={() => startExercise(currentSentence.id)}
-          >
-            Write in {story.language} ✨
-          </button>
-          
-          <div className="sentence-navigation">
+        <div className="practice-section">
+          <DrawingCanvas 
+            onSubmit={handleSubmit}
+            submitButtonText="Submit & Next →"
+          />
+
+          {currentSentenceIndex > 0 && (
             <button 
-              className="nav-btn"
-              disabled={currentSentenceIndex === 0}
+              className="btn-secondary previous-button"
               onClick={() => setCurrentSentenceIndex(currentSentenceIndex - 1)}
             >
-              ← Previous
+              ← Previous Sentence
             </button>
-            <button 
-              className="nav-btn"
-              disabled={currentSentenceIndex === story.sentences.length - 1}
-              onClick={() => setCurrentSentenceIndex(currentSentenceIndex + 1)}
-            >
-              Next →
-            </button>
-          </div>
+          )}
         </div>
       </div>
     </div>

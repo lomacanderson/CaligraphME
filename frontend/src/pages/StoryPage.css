@@ -58,25 +58,40 @@
 .story-title {
   font-size: 2.5rem;
   color: var(--text-primary);
-  margin-bottom: 1rem;
+  margin: 0;
   font-weight: 800;
 }
 
-.progress-info {
+/* Story Content Layout */
+.story-content {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-.progress-text {
-  font-size: 1rem;
-  color: var(--text-secondary);
-  font-weight: 600;
+/* Story Book Display */
+.story-book {
+  background-color: var(--bg-primary);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: var(--shadow-lg);
+  border: 3px solid var(--border-color);
+  width: 100%;
+}
+
+.story-progress {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid var(--border-color);
 }
 
 .progress-bar {
-  width: 300px;
+  flex: 1;
   height: 10px;
   background-color: var(--bg-tertiary);
   border-radius: 20px;
@@ -91,24 +106,13 @@
   border-radius: 20px;
 }
 
-/* Story Content Layout */
-.story-content {
-  display: grid;
-  grid-template-columns: 1.5fr 1fr;
-  gap: 2rem;
-  align-items: start;
-}
-
-/* Story Book Display */
-.story-book {
-  background-color: var(--bg-primary);
-  border-radius: 16px;
-  padding: 3rem;
-  box-shadow: var(--shadow-lg);
-  border: 3px solid var(--border-color);
-  min-height: 500px;
-  position: sticky;
-  top: 2rem;
+.progress-text {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  font-weight: 700;
+  white-space: nowrap;
+  min-width: 45px;
+  text-align: right;
 }
 
 .story-text {
@@ -154,114 +158,121 @@
   opacity: 0.7;
 }
 
-/* Practice Panel */
-.practice-panel {
-  background-color: var(--bg-primary);
-  border-radius: 16px;
-  padding: 2rem;
-  box-shadow: var(--shadow-lg);
-  border: 3px solid var(--primary-color);
+/* Practice Section */
+.practice-section {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
 }
 
-.practice-header {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  justify-content: center;
-}
-
-.practice-emoji {
-  font-size: 2rem;
-}
-
-.practice-header h3 {
-  font-size: 1.5rem;
-  color: var(--text-primary);
-  margin: 0;
-  font-weight: 700;
-}
-
-.current-sentence-display {
-  background-color: var(--bg-secondary);
-  border-radius: 12px;
+/* Drawing Canvas Styles */
+.drawing-canvas-container {
+  background-color: var(--bg-primary);
+  border-radius: 16px;
   padding: 1.5rem;
-  text-align: center;
+  box-shadow: var(--shadow-lg);
+  border: 3px solid var(--success-color);
 }
 
-.sentence-number {
-  font-size: 0.875rem;
-  color: var(--primary-color);
-  font-weight: 700;
-  text-transform: uppercase;
-  margin-bottom: 0.5rem;
-}
-
-.sentence-text {
-  font-size: 1.25rem;
-  color: var(--text-primary);
-  line-height: 1.6;
-  font-weight: 600;
-  margin: 0;
-}
-
-.practice-button {
-  width: 100%;
-  padding: 1.25rem;
-  font-size: 1.25rem;
+.canvas-wrapper {
+  margin-bottom: 1rem;
   border-radius: 12px;
-  transition: all 0.3s;
-}
-
-.practice-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(77, 166, 255, 0.4);
-}
-
-/* Sentence Navigation */
-.sentence-navigation {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-}
-
-.nav-btn {
-  padding: 0.875rem 1.5rem;
+  overflow: hidden;
   border: 2px solid var(--border-color);
-  border-radius: 8px;
+  width: 100%;
+}
+
+.drawing-canvas {
+  border-radius: 12px !important;
+  width: 100% !important;
+}
+
+.canvas-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  background-color: var(--bg-secondary);
+  padding: 1rem;
+  border-radius: 12px;
+}
+
+.tool-group {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.tool-btn {
+  width: 48px;
+  height: 48px;
+  border: 2px solid var(--border-color);
+  border-radius: 10px;
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   transition: all 0.2s;
+  flex-shrink: 0;
 }
 
-.nav-btn:hover:not(:disabled) {
+.tool-btn:hover {
   background-color: var(--primary-color);
   color: white;
   border-color: var(--primary-color);
   transform: translateY(-2px);
 }
 
-.nav-btn:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
+.tool-btn.active {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.color-picker-btn {
+  width: 48px;
+  height: 48px;
+  border: 3px solid var(--border-color);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.color-picker-btn:hover {
+  transform: scale(1.1);
+  border-color: var(--primary-color);
+}
+
+.color-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.submit-btn {
+  padding: 1rem 2.5rem;
+  font-size: 1.3rem;
+  font-weight: 700;
+  border-radius: 12px;
+  margin-left: auto;
+}
+
+.previous-button {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 12px;
 }
 
 /* Responsive */
-@media (max-width: 1024px) {
-  .story-content {
-    grid-template-columns: 1fr;
-  }
-
-  .story-book {
-    position: relative;
-    top: 0;
-    min-height: auto;
-  }
-}
 
 @media (max-width: 768px) {
   .story-page {
@@ -271,13 +282,19 @@
   .story-title {
     font-size: 1.75rem;
   }
-
-  .progress-bar {
-    width: 100%;
-  }
   
   .story-book {
     padding: 1.5rem;
+  }
+
+  .story-progress {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+  }
+
+  .progress-text {
+    font-size: 0.9rem;
+    min-width: 40px;
   }
 
   .story-text {
@@ -285,16 +302,18 @@
     line-height: 1.8;
   }
 
-  .practice-panel {
-    padding: 1.5rem;
+  .canvas-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
   }
 
-  .practice-button {
-    font-size: 1.1rem;
-    padding: 1rem;
+  .tool-group {
+    justify-content: center;
   }
 
-  .sentence-navigation {
-    grid-template-columns: 1fr;
+  .submit-btn {
+    width: 100%;
+    margin-left: 0;
   }
 }
