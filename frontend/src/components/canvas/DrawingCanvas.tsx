@@ -140,19 +140,6 @@ export function DrawingCanvas({ onSubmit, submitButtonText = "Submit" }: Drawing
     }
   }
 
-    // "Save" now triggers recognition first. We try HW API; if unavailable, we export PNG and use Tesseract.
-    async function handleSave() {
-        // 1) Prefer on-device handwriting recognition (strokes → text)
-        if (recognizerRef.current) {
-            const hw = await recognizeFromStrokes();
-            if (hw) return; // got text already
-        }
-
-        // 2) Fallback: export PNG and run Tesseract on the rasterized image
-        const dataURL = await canvasRef.current?.exportImage("png");
-
-    }
-
   return (
     <div className="drawing-canvas-container">
       <div className="canvas-wrapper">
