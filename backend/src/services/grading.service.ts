@@ -163,10 +163,12 @@ export class GradingService {
     const handwritingWeight = 0.4;
     const translationWeight = 0.6;
     
-    return Math.round(
+    const pctage = Math.round(
       handwriting.overallScore * handwritingWeight +
       translation.overallScore * translationWeight
-    );
+    ) / 100;
+
+    return Math.round((pctage * 5) * 2) / 2
   }
 
   private static generateCombinedFeedback(handwriting: any, translation: any): any {
@@ -205,10 +207,10 @@ export class GradingService {
   private static getOverallMessage(handwriting: any, translation: any): string {
     const overall = this.calculateOverallScore(handwriting, translation);
     
-    if (overall >= 90) return '🌟 Outstanding work! You\'re doing amazing!';
-    if (overall >= 80) return '🎉 Great job! Keep up the excellent work!';
-    if (overall >= 70) return '👍 Good effort! You\'re making progress!';
-    if (overall >= 60) return '📝 Nice try! Keep practicing!';
+    if (overall >= 90 * 0.05) return '🌟 Outstanding work! You\'re doing amazing!';
+    if (overall >= 80 * 0.05) return '🎉 Great job! Keep up the excellent work!';
+    if (overall >= 70 * 0.05) return '👍 Good effort! You\'re making progress!';
+    if (overall >= 60 * 0.05) return '📝 Nice try! Keep practicing!';
     return '💪 Don\'t give up! Practice makes perfect!';
   }
 
