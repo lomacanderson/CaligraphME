@@ -1,5 +1,3 @@
-import { SupportedLanguage } from './user.types';
-
 export interface Exercise {
   id: string;
   userId: string;

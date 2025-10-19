@@ -1,13 +1,11 @@
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
 import { DrawingCanvas } from '@/components/canvas/DrawingCanvas';
 import { FeedbackDisplay } from '@/components/exercise/FeedbackDisplay';
 
 export function ExercisePage() {
-  const { id } = useParams<{ id: string }>();
-  const [canvasData, setCanvasData] = useState<string>('');
+  const [, setCanvasData] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [feedback, setFeedback] = useState<any>(null);
+  const [feedback] = useState<any>(null);
 
   const handleSubmit = async (imageData: string, extractedText?: string, confidence?: number) => {
     try {

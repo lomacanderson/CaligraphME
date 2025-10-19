@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { storyApi } from '@/services/api/story.api';
-import { Story, StoryGenerationRequest, StoryTheme, LanguageLevel } from '@shared/types';
+import { Story, StoryGenerationRequest, StoryTheme, LanguageLevel, SupportedLanguage } from '@shared/types';
 import { StoryGenerationModal } from '@/components/story/StoryGenerationModal';
 import { ConfirmationModal } from '@/components/common/ConfirmationModal';
 import { useUserStore } from '@/stores/userStore';
@@ -240,7 +240,7 @@ export function StoryListPage() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onGenerate={handleGenerateStory}
-        userLanguage={user?.targetLanguage}
+        userLanguage={user?.targetLanguage as SupportedLanguage}
         userLevel={user?.level}
       />
 
