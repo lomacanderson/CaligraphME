@@ -113,6 +113,17 @@ export function StoryPage() {
       // Display feedback
       setFeedback(gradingResult);
       
+      // Save the handwriting image for this sentence after successful grading
+      if (currentSubmissionImage) {
+        console.log('💾 Saving handwriting image for sentence:', currentSentenceIndex);
+        setCompletedSentences(prev => {
+          const newMap = new Map(prev);
+          newMap.set(currentSentenceIndex, currentSubmissionImage);
+          console.log('📸 Completed sentences now:', Array.from(newMap.keys()));
+          return newMap;
+        });
+      }
+      
       // Update user points
       if (gradingResult.pointsEarned > 0) {
         updatePoints(gradingResult.pointsEarned);
@@ -212,7 +223,8 @@ export function StoryPage() {
     });
     
     if (sentence.audioUrl) {
-      const audioUrl = `http://localhost:3000${sentence.audioUrl}`;
+      // Audio URL is now a direct Supabase Storage URL
+      const audioUrl = sentence.audioUrl;
       console.log('🔊 Playing audio from:', audioUrl);
       const audio = new Audio(audioUrl);
       
@@ -267,6 +279,8 @@ export function StoryPage() {
               const isCompleted = completedSentences.has(index);
               const imageData = completedSentences.get(index);
               
+              console.log(`🔍 Sentence ${index}: isCompleted=${isCompleted}, hasImage=${!!imageData}`);
+              
               return isCompleted && imageData ? (
                 <span key={sentence.id} className="story-sentence-image-wrapper">
                   <img 
@@ -275,6 +289,13 @@ export function StoryPage() {
                     className="story-sentence-image"
                     onClick={() => handleSentenceClick(index)}
                     title="Click to hear pronunciation 🔊"
+                    onError={(e) => {
+                      console.error('❌ Failed to load handwriting image:', e);
+                      console.log('Image data:', imageData?.substring(0, 50) + '...');
+                    }}
+                    onLoad={() => {
+                      console.log('✅ Handwriting image loaded successfully');
+                    }}
                   />
                 </span>
               ) : (

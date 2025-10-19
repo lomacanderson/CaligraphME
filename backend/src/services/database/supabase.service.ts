@@ -61,13 +61,50 @@ export class SupabaseService {
 
   // Storage
   static async uploadFile(bucket: string, path: string, file: Buffer) {
-    // TODO: Implement file upload
-    throw new Error('Not implemented');
+    const supabase = this.getClient();
+    
+    const { data, error } = await supabase.storage
+      .from(bucket)
+      .upload(path, file, {
+        contentType: 'audio/mpeg',
+        upsert: true, // Overwrite if exists
+      });
+
+    if (error) throw error;
+    return data;
   }
 
   static async getFileUrl(bucket: string, path: string) {
-    // TODO: Implement get file URL
-    throw new Error('Not implemented');
+    const supabase = this.getClient();
+    
+    const { data } = supabase.storage
+      .from(bucket)
+      .getPublicUrl(path);
+
+    return data.publicUrl;
+  }
+
+  static async deleteFile(bucket: string, path: string) {
+    const supabase = this.getClient();
+    
+    const { error } = await supabase.storage
+      .from(bucket)
+      .remove([path]);
+
+    if (error) throw error;
+  }
+
+  static async createBucket(bucketName: string) {
+    const supabase = this.getClient();
+    
+    const { data, error } = await supabase.storage.createBucket(bucketName, {
+      public: true,
+      allowedMimeTypes: ['audio/mpeg', 'audio/wav', 'audio/mp4'],
+      fileSizeLimit: 10 * 1024 * 1024, // 10MB limit
+    });
+
+    if (error) throw error;
+    return data;
   }
 }
 

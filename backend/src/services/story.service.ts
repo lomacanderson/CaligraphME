@@ -2,6 +2,7 @@ import { GeminiService } from './ai/gemini.service.js';
 import { SupabaseService } from './database/supabase.service.js';
 import { textToAudio } from './ai/dictation.service.js';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { 
   Story, 
@@ -299,19 +300,38 @@ export class StoryService {
   private static async generateAudioForSentences(sentencesData: any[], storyId: string): Promise<void> {
     console.log(`🎵 Generating audio for ${sentencesData.length} sentences in story ${storyId}...`);
     
-    const audioDir = path.join(__dirname, '..', '..', 'public', 'audio');
+    // Ensure the audio bucket exists
+    try {
+      await SupabaseService.createBucket('audio-files');
+      console.log('✅ Audio bucket ready');
+    } catch (error) {
+      console.log('📁 Audio bucket already exists or created');
+    }
     
     for (const sentence of sentencesData) {
       try {
         // Generate unique filename for this sentence
         const audioFileName = `${sentence.id}.mp3`;
-        const audioFilePath = path.join(audioDir, audioFileName);
+        const audioFilePath = path.join(__dirname, '..', '..', 'temp', audioFileName);
+        
+        // Ensure temp directory exists
+        const tempDir = path.dirname(audioFilePath);
+        if (!fs.existsSync(tempDir)) {
+          fs.mkdirSync(tempDir, { recursive: true });
+        }
         
         // Generate audio using ElevenLabs
         await textToAudio(sentence.text_original, audioFilePath);
         
-        // Build the audio URL (relative path for frontend)
-        const audioUrl = `/audio/${audioFileName}`;
+        // Read the generated audio file
+        const audioBuffer = fs.readFileSync(audioFilePath);
+        
+        // Upload to Supabase Storage
+        const storagePath = `stories/${storyId}/${audioFileName}`;
+        await SupabaseService.uploadFile('audio-files', storagePath, audioBuffer);
+        
+        // Get the public URL from Supabase Storage
+        const audioUrl = await SupabaseService.getFileUrl('audio-files', storagePath);
         
         // Update the sentence in the database with the audio URL
         const { error } = await SupabaseService.client
@@ -322,15 +342,24 @@ export class StoryService {
         if (error) {
           console.error(`Failed to update audio URL for sentence ${sentence.id}:`, error);
         } else {
-          console.log(`✅ Generated audio for sentence: "${sentence.text_original.substring(0, 30)}..."`);
+          console.log(`✅ Generated and uploaded audio for sentence: "${sentence.text_original.substring(0, 30)}..."`);
+          console.log(`🔗 Audio URL: ${audioUrl}`);
         }
+        
+        // Clean up temporary file
+        try {
+          fs.unlinkSync(audioFilePath);
+        } catch (cleanupError) {
+          console.warn(`Failed to cleanup temp file ${audioFilePath}:`, cleanupError);
+        }
+        
       } catch (error) {
         console.error(`Failed to generate audio for sentence ${sentence.id}:`, error);
         // Continue with other sentences even if one fails
       }
     }
     
-    console.log(`🎉 Audio generation completed for story ${storyId}`);
+    console.log(`🎉 Audio generation and upload completed for story ${storyId}`);
   }
 }
 
