@@ -170,7 +170,7 @@ export class StoryService {
     try {
       let query = SupabaseService.client
         .from('stories')
-        .select('*');
+        .select('*, story_sentences(id)');
       
       // Apply filters
       if (filters.language && filters.language !== 'all') {
@@ -199,7 +199,7 @@ export class StoryService {
         throw new Error(`Failed to fetch stories: ${error.message}`);
       }
       
-      // Map database records to Story type
+      // Map database records to Story type with sentence count
       return (data || []).map((record: any) => ({
         id: record.id,
         title: record.title,
@@ -212,7 +212,7 @@ export class StoryService {
         },
         estimatedDuration: record.estimated_duration,
         createdAt: new Date(record.created_at),
-        sentences: [], // Don't load sentences by default for list view
+        sentences: record.story_sentences || [], // Return sentence IDs for counting
       }));
     } catch (error) {
       console.error('Get stories error:', error);
