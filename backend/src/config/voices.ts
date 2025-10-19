@@ -96,7 +96,7 @@ export const DEFAULT_VOICES_BY_LEVEL = {
   beginner: 'JBFqnCBsd6RMkjVDRZzb', // Bella - friendly and clear
   intermediate: 'ErXwobaYiN019PkySvjV', // Antoni - warm and engaging
   advanced: 'pNInz6obpgDQGcFmaJgB', // Adam - clear and professional
-};
+} as const;
 
 // Get recommended voices for a specific language level
 export function getRecommendedVoices(level: string): Voice[] {

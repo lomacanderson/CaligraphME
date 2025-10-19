@@ -1,19 +1,19 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "commonjs",
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "outDir": "dist",
     "rootDir": "src",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
+    "lib": ["ES2022", "DOM"],
     "baseUrl": ".",
-    "paths": {
-      "@shared/*": ["../shared/dist/*"]   // <-- IMPORTANT: built output
-    }
+    "paths": { "@shared/*": ["../shared/dist/*"] }
   },
+  "references": [{ "path": "../shared" }],
   "include": ["src/**/*"],
-  "exclude": ["dist", "node_modules"],
-  "references": [{ "path": "../shared" }]  // <-- build shared first
+  "exclude": ["dist", "node_modules"]
 }

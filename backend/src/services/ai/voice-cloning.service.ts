@@ -85,7 +85,9 @@ export class VoiceCloningService {
       
       // Convert audio samples to the format expected by ElevenLabs
       const audioFiles = request.audioSamples.map((buffer, index) => {
-        const blob = new Blob([buffer], { type: 'audio/webm' });
+        // Convert Node.js Buffer to Uint8Array so it's a valid BlobPart (ArrayBufferView)
+        const uint8Array = new Uint8Array(buffer);
+        const blob = new Blob([uint8Array], { type: 'audio/webm' });
         return new File([blob], `sample_${index}.webm`, { type: 'audio/webm' });
       });
 

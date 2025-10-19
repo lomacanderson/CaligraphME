@@ -77,7 +77,7 @@ export class StoryService {
         // 4.5. Generate audio for each sentence (blocking - wait for completion)
         console.log('🎵 Starting synchronous audio generation...');
         try {
-          const selectedVoice = params.voiceId || DEFAULT_VOICES_BY_LEVEL[params.level] || DEFAULT_VOICES_BY_LEVEL.beginner;
+          const selectedVoice = params.voiceId || (params.level ? DEFAULT_VOICES_BY_LEVEL[params.level as keyof typeof DEFAULT_VOICES_BY_LEVEL] : undefined) || DEFAULT_VOICES_BY_LEVEL.beginner;
           await this.generateAudioForSentences(sentencesData, storyData.id, selectedVoice);
           console.log('✅ Audio generation completed before response');
         } catch (err) {
