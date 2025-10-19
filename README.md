@@ -35,9 +35,8 @@ CaligraphME/
 - **Express** - Web framework
 - **TypeScript** - Type safety
 - **Supabase** - Database, authentication, and storage
-- **Amazon Rekognition** - Image-to-text OCR
 - **Gemini API** - Story generation and translation
-- **AWS Services** - Various AI services
+- **ElevenLabs** - Voice synthesization and narration
 
 ## Core Features
 
