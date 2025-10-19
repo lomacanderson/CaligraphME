@@ -30,6 +30,7 @@
     "class-variance-authority": "^0.7.1",
     "fabric": "^6.7.1",
     "lucide-react": "^0.546.0",
-    "react-sketch-canvas": "^6.2.0"
+    "react-sketch-canvas": "^6.2.0",
+    "tesseract.js": "^6.0.1"
   }
 }
