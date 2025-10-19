@@ -1,6 +1,7 @@
 import { SupabaseService } from './database/supabase.service.js';
 import { VoiceCloningService } from './ai/voice-cloning.service.js';
 import { CustomVoiceRecord, VoiceCloningRequest, VoiceCloningResponse } from '../types/custom-voice.types.js';
+import { Readable } from 'stream';
 
 export class CustomVoiceService {
   /**
@@ -243,16 +244,27 @@ export class CustomVoiceService {
       const chunks: Buffer[] = [];
       
       return new Promise<Buffer>((resolve, reject) => {
-        audioStream.on('data', (chunk: Buffer) => {
+        // Convert web ReadableStream to Node.js stream if needed
+        let nodeStream: NodeJS.ReadableStream;
+        
+        if (audioStream instanceof ReadableStream) {
+          // It's a web ReadableStream, convert it
+          nodeStream = Readable.fromWeb(audioStream as any);
+        } else {
+          // It's already a Node.js stream
+          nodeStream = audioStream as NodeJS.ReadableStream;
+        }
+        
+        nodeStream.on('data', (chunk: Buffer) => {
           chunks.push(chunk);
         });
         
-        audioStream.on('end', () => {
+        nodeStream.on('end', () => {
           const buffer = Buffer.concat(chunks);
           resolve(buffer);
         });
         
-        audioStream.on('error', (error: Error) => {
+        nodeStream.on('error', (error: Error) => {
           reject(error);
         });
       });
