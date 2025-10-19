@@ -1,6 +1,5 @@
 import { ElevenLabsClient } from 'elevenlabs';
 import * as dotenv from 'dotenv';
-import { Readable } from 'stream';
 
 dotenv.config();
 
@@ -81,7 +80,7 @@ export class VoiceCloningService {
         console.log(`✅ ElevenLabs connection successful. Found ${voices.voices.length} voices.`);
       } catch (testError) {
         console.error('❌ ElevenLabs connection test failed:', testError);
-        throw new Error(`ElevenLabs API connection failed: ${testError.message}`);
+        throw new Error(`ElevenLabs API connection failed: ${(testError as Error).message}`);
       }
       
       // Convert audio samples to the format expected by ElevenLabs
@@ -107,51 +106,51 @@ export class VoiceCloningService {
       
       // Provide more detailed error information
       let errorMessage = 'Unknown error occurred';
-      
-      if (error.message) {
-        if (error.message.includes('fetch failed')) {
+
+      if ((error as Error).message) {
+        if ((error as Error).message.includes('fetch failed')) {
           errorMessage = 'Network connection failed - unable to reach ElevenLabs API';
-        } else if (error.message.includes('401') || error.message.includes('Unauthorized')) {
+        } else if ((error as Error).message.includes('401') || (error as Error).message.includes('Unauthorized')) {
           errorMessage = 'Invalid API key or unauthorized access';
-        } else if (error.message.includes('429') || error.message.includes('rate limit')) {
+        } else if ((error as Error).message.includes('429') || (error as Error).message.includes('rate limit')) {
           errorMessage = 'Rate limit exceeded - too many requests';
-        } else if (error.message.includes('413') || error.message.includes('too large')) {
+        } else if ((error as Error).message.includes('413') || (error as Error).message.includes('too large')) {
           errorMessage = 'Audio files too large for processing';
         } else {
-          errorMessage = error.message;
+          errorMessage = (error as Error).message;
         }
       }
-      
+
       console.error('Detailed error:', errorMessage);
       throw new Error(`Failed to clone voice: ${errorMessage}`);
     }
   }
 
-  /**
-   * Get all custom voices for a user
-   */
-  static async getCustomVoices(): Promise<CustomVoice[]> {
-    try {
-      const voices = await elevenLabsClient.voices.getAll();
-      return voices.voices;
-    } catch (error) {
-      console.error('❌ Failed to fetch custom voices:', error);
-      throw new Error(`Failed to fetch custom voices: ${error.message}`);
-    }
-  }
+  // /**
+  //  * Get all custom voices for a user
+  //  */
+  // static async getCustomVoices(): Promise<CustomVoice[]> {
+  //   try {
+  //     const voices = await elevenLabsClient.voices.getAll();
+  //     return voices.voices;
+  //   } catch (error) {
+  //     console.error('❌ Failed to fetch custom voices:', error);
+  //     throw new Error(`Failed to fetch custom voices: ${error.message}`);
+  //   }
+  // }
 
-  /**
-   * Get a specific custom voice by ID
-   */
-  static async getCustomVoice(voiceId: string): Promise<CustomVoice> {
-    try {
-      const voice = await elevenLabsClient.voices.get(voiceId);
-      return voice;
-    } catch (error) {
-      console.error(`❌ Failed to fetch custom voice ${voiceId}:`, error);
-      throw new Error(`Failed to fetch custom voice: ${error.message}`);
-    }
-  }
+  // /**
+  //  * Get a specific custom voice by ID
+  //  */
+  // static async getCustomVoice(voiceId: string): Promise<CustomVoice> {
+  //   try {
+  //     const voice = await elevenLabsClient.voices.get(voiceId);
+  //     return voice;
+  //   } catch (error) {
+  //     console.error(`❌ Failed to fetch custom voice ${voiceId}:`, error);
+  //     throw new Error(`Failed to fetch custom voice: ${error.message}`);
+  //   }
+  // }
 
   /**
    * Delete a custom voice
@@ -162,7 +161,7 @@ export class VoiceCloningService {
       console.log(`✅ Custom voice deleted: ${voiceId}`);
     } catch (error) {
       console.error(`❌ Failed to delete custom voice ${voiceId}:`, error);
-      throw new Error(`Failed to delete custom voice: ${error.message}`);
+      throw new Error(`Failed to delete custom voice: ${(error as Error).message}`);
     }
   }
 
@@ -177,21 +176,22 @@ export class VoiceCloningService {
       style?: number;
       use_speaker_boost?: boolean;
     }
-  ): Promise<CustomVoice> {
+  ): Promise<any> {
     try {
-      const updatedVoice = await elevenLabsClient.voices.edit(voiceId, {
-        name: undefined, // Don't change name
-        description: undefined, // Don't change description
-        labels: undefined, // Don't change labels
-        files: undefined, // Don't change files
-        ...settings,
-      });
+      // Only include settings that are provided
+      const editPayload: any = {};
+      if (settings?.stability !== undefined) editPayload.stability = settings.stability;
+      if (settings?.similarity_boost !== undefined) editPayload.similarity_boost = settings.similarity_boost;
+      if (settings?.style !== undefined) editPayload.style = settings.style;
+      if (settings?.use_speaker_boost !== undefined) editPayload.use_speaker_boost = settings.use_speaker_boost;
+      
+      const updatedVoice = await elevenLabsClient.voices.edit(voiceId, editPayload);
       
       console.log(`✅ Voice settings updated: ${voiceId}`);
       return updatedVoice;
     } catch (error) {
       console.error(`❌ Failed to update voice settings ${voiceId}:`, error);
-      throw new Error(`Failed to update voice settings: ${error.message}`);
+      throw new Error(`Failed to update voice settings: ${(error as Error).message}`);
     }
   }
 
@@ -207,7 +207,7 @@ export class VoiceCloningService {
       style?: number;
       use_speaker_boost?: boolean;
     }
-  ): Promise<ReadableStream> {
+  ): Promise<NodeJS.ReadableStream> {
     try {
       console.log(`🎵 Generating audio with custom voice: ${voiceId}`);
       
@@ -226,7 +226,7 @@ export class VoiceCloningService {
       return audioStream;
     } catch (error) {
       console.error(`❌ Failed to generate audio with custom voice ${voiceId}:`, error);
-      throw new Error(`Failed to generate audio: ${error.message}`);
+      throw new Error(`Failed to generate audio: ${(error as Error).message}`);
     }
   }
 

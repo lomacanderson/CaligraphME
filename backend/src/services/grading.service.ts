@@ -1,4 +1,3 @@
-import { GeminiService } from './ai/gemini.service.js';
 import { HandwritingGraderService } from './handwriting-grader.service.js';
 import { TranslationGraderService } from './translation-grader.service.js';
 import { SupabaseService } from './database/supabase.service.js';
@@ -240,14 +239,14 @@ export class GradingService {
     return steps;
   }
 
-  static async compareTexts(data: any) {
+  static async compareTexts(_data: any) {
     // TODO: Implement text comparison
     // Use AI to compare semantic similarity
     // Return comparison metrics
     throw new Error('Not implemented');
   }
 
-  static async getGradingResults(submissionId: string) {
+  static async getGradingResults(_submissionId: string) {
     // TODO: Implement get grading results
     throw new Error('Not implemented');
   }

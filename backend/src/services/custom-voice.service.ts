@@ -75,7 +75,7 @@ export class CustomVoiceService {
 
     } catch (error) {
       console.error('❌ Failed to create custom voice:', error);
-      throw new Error(`Failed to create custom voice: ${error.message}`);
+      throw new Error(`Failed to create custom voice: ${(error as Error).message}`);
     }
   }
 
@@ -98,7 +98,7 @@ export class CustomVoiceService {
 
     } catch (error) {
       console.error('❌ Failed to fetch custom voices:', error);
-      throw new Error(`Failed to fetch custom voices: ${error.message}`);
+      throw new Error(`Failed to fetch custom voices: ${(error as Error).message}`);
     }
   }
 
@@ -122,7 +122,7 @@ export class CustomVoiceService {
 
     } catch (error) {
       console.error(`❌ Failed to fetch custom voice ${voiceId}:`, error);
-      throw new Error(`Failed to fetch custom voice: ${error.message}`);
+      throw new Error(`Failed to fetch custom voice: ${(error as Error).message}`);
     }
   }
 
@@ -183,7 +183,7 @@ export class CustomVoiceService {
 
     } catch (error) {
       console.error(`❌ Failed to update voice settings ${voiceId}:`, error);
-      throw new Error(`Failed to update voice settings: ${error.message}`);
+      throw new Error(`Failed to update voice settings: ${(error as Error).message}`);
     }
   }
 
@@ -216,7 +216,7 @@ export class CustomVoiceService {
 
     } catch (error) {
       console.error(`❌ Failed to delete custom voice ${voiceId}:`, error);
-      throw new Error(`Failed to delete custom voice: ${error.message}`);
+      throw new Error(`Failed to delete custom voice: ${(error as Error).message}`);
     }
   }
 
@@ -240,30 +240,26 @@ export class CustomVoiceService {
       );
 
       // Convert stream to buffer
-      const chunks: Uint8Array[] = [];
-      const reader = audioStream.getReader();
+      const chunks: Buffer[] = [];
       
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        chunks.push(value);
-      }
-
-      // Combine chunks into buffer
-      const totalLength = chunks.reduce((acc, chunk) => acc + chunk.length, 0);
-      const buffer = new Uint8Array(totalLength);
-      let offset = 0;
-      
-      for (const chunk of chunks) {
-        buffer.set(chunk, offset);
-        offset += chunk.length;
-      }
-
-      return Buffer.from(buffer);
+      return new Promise<Buffer>((resolve, reject) => {
+        audioStream.on('data', (chunk: Buffer) => {
+          chunks.push(chunk);
+        });
+        
+        audioStream.on('end', () => {
+          const buffer = Buffer.concat(chunks);
+          resolve(buffer);
+        });
+        
+        audioStream.on('error', (error: Error) => {
+          reject(error);
+        });
+      });
 
     } catch (error) {
       console.error(`❌ Failed to generate audio with custom voice ${voiceId}:`, error);
-      throw new Error(`Failed to generate audio: ${error.message}`);
+      throw new Error(`Failed to generate audio: ${(error as Error).message}`);
     }
   }
 
@@ -299,7 +295,7 @@ export class CustomVoiceService {
 
     } catch (error) {
       console.error('❌ Failed to fetch voice usage stats:', error);
-      throw new Error(`Failed to fetch voice usage stats: ${error.message}`);
+      throw new Error(`Failed to fetch voice usage stats: ${(error as Error).message}`);
     }
   }
 }

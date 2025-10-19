@@ -19,7 +19,7 @@ router.use('/ocr', ocrRouter);
 router.use('/custom-voices', customVoiceRouter);
 
 // API info
-router.get('/', (req, res) => {
+router.get('/', (_req, res) => {
   res.json({
     name: 'CaligraphME API',
     version: '0.1.0',

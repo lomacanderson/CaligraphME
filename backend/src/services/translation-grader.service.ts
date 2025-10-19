@@ -1,6 +1,4 @@
 import { TranslationGrade, ErrorDetail, ErrorType, Feedback, FeedbackLevel } from '@shared/types';
-import { GeminiService } from './ai/gemini.service.js';
-
 /**
  * Translation Grader Service
  * 
@@ -102,7 +100,7 @@ export class TranslationGraderService {
   private static async calculateSemanticSimilarity(
     studentText: string,
     expectedText: string,
-    language: string
+    _language: string
   ): Promise<number> {
     // TODO: Use Gemini API to calculate semantic similarity
     // This compares meaning, not exact wording
@@ -132,7 +130,7 @@ export class TranslationGraderService {
   
   private static async checkGrammar(
     text: string,
-    language: string
+    _language: string
   ): Promise<number> {
     // TODO: Use Gemini API to check grammar
     // For MVP, return a default score
@@ -157,7 +155,7 @@ export class TranslationGraderService {
   private static async checkVocabulary(
     studentText: string,
     expectedText: string,
-    language: string
+    _language: string
   ): Promise<number> {
     // TODO: Check if appropriate vocabulary is used
     // Compare word choices, synonyms acceptable
@@ -178,8 +176,8 @@ export class TranslationGraderService {
   }
   
   private static async checkSpelling(
-    text: string,
-    language: string
+    _text: string,
+    _language: string
   ): Promise<{ spellingScore: number; spellingErrors: string[] }> {
     // TODO: Use spell checker or Gemini API
     // For MVP, return optimistic results
@@ -191,8 +189,8 @@ export class TranslationGraderService {
   }
   
   private static async identifyErrors(
-    studentText: string,
-    expectedText: string,
+    _studentText: string,
+    _expectedText: string,
     spellingErrors: string[]
   ): Promise<ErrorDetail[]> {
     // TODO: Implement detailed error identification
@@ -238,7 +236,7 @@ export class TranslationGraderService {
     grammarScore: number,
     vocabularyScore: number,
     spellingScore: number,
-    errors: ErrorDetail[]
+    _errors: ErrorDetail[]
   ): Feedback {
     let level: FeedbackLevel;
     let message: string;

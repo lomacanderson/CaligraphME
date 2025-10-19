@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { CustomVoiceAPI, CustomVoice, VoiceCloningRequest } from '../../services/api/custom-voice.api';
+import { CustomVoiceAPI, CustomVoice } from '../../services/api/custom-voice.api';
 import './CustomVoiceManager.css';
 
 interface CustomVoiceManagerProps {
@@ -190,14 +190,14 @@ const CreateVoiceModal: React.FC<CreateVoiceModalProps> = ({
     description: '',
     category: 'personal' as const,
   });
-  const [audioFiles, setAudioFiles] = useState<File[]>([]);
+  //const [audioFiles, setAudioFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
   // Recording state
   const [isRecording, setIsRecording] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
-  const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
+  //const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const [recordings, setRecordings] = useState<{ blob: Blob; url: string }[]>([]);
   const [recordingTime, setRecordingTime] = useState(0);
   const [recordingInterval, setRecordingInterval] = useState<NodeJS.Timeout | null>(null);
@@ -233,7 +233,6 @@ const CreateVoiceModal: React.FC<CreateVoiceModalProps> = ({
         const blob = new Blob(chunks, { type: 'audio/webm;codecs=opus' });
         const url = URL.createObjectURL(blob);
         setRecordings(prev => [...prev, { blob, url }]);
-        setAudioChunks([]);
         
         // Stop all tracks to release microphone
         stream.getTracks().forEach(track => track.stop());

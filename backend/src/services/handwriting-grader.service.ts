@@ -91,7 +91,7 @@ export class HandwritingGraderService {
   }
   
   private static async analyzePenmanship(
-    canvasImage: Buffer | string,
+    _canvasImage: Buffer | string,
     extractedText: string
   ): Promise<number> {
     // TODO: Implement advanced penmanship analysis

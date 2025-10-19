@@ -29,10 +29,10 @@ async function setupAudioStorage() {
     await SupabaseService.createBucket('audio-files');
     console.log('✅ Audio storage bucket ready');
   } catch (error) {
-    if (error.message?.includes('already exists')) {
+    if ((error as Error).message?.includes('already exists')) {
       console.log('📁 Audio storage bucket already exists');
     } else {
-      console.error('⚠️ Audio storage setup failed:', error.message);
+      console.error('⚠️ Audio storage setup failed:', (error as Error).message);
       console.log('💡 Audio generation may not work properly');
     }
   }
@@ -50,7 +50,7 @@ app.use(requestLogger);
 // Note: Audio files are now served from Supabase Storage, not local files
 
 // Health check
-app.get('/health', (req, res) => {
+app.get('/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 

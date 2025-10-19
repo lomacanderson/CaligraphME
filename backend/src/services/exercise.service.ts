@@ -1,10 +1,7 @@
-import { SupabaseService } from './database/supabase.service.js';
-import { OCRService } from './ocr.service.js';
-import { GradingService } from './grading.service.js';
 import { v4 as uuidv4 } from 'uuid';
 
 export class ExerciseService {
-  static async createExercise(data: any) {
+  static async createExercise(_data: any) {
     // TODO: Implement create exercise
     // 1. Validate data
     // 2. Create exercise record in database
@@ -12,24 +9,21 @@ export class ExerciseService {
     throw new Error('Not implemented');
   }
 
-  static async getExerciseById(id: string) {
+  static async getExerciseById(_id: string) {
     // TODO: Implement get exercise by ID
     throw new Error('Not implemented');
   }
 
-  static async getUserExercises(userId: string) {
+  static async getUserExercises(_userId: string) {
     // TODO: Implement get user exercises
     throw new Error('Not implemented');
   }
 
   static async submitCanvas(exerciseId: string, requestData: any) {
     try {
-      const { 
-        canvasData, 
+      const {
         expectedText, 
-        sourceLanguage, 
-        targetLanguage, 
-        extractedText, 
+        extractedText,
         ocrConfidence 
       } = requestData;
       
@@ -62,7 +56,7 @@ export class ExerciseService {
     }
   }
 
-  static async updateExerciseStatus(id: string, status: string) {
+  static async updateExerciseStatus(_id: string, _status: string) {
     // TODO: Implement update exercise status
     throw new Error('Not implemented');
   }

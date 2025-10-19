@@ -141,18 +141,18 @@ The story should have exactly ${sentenceCount} sentences. Make sure the JSON is 
     }
   }
 
-  static async translateText(text: string, targetLanguage: string) {
+  static async translateText(_text: string, _targetLanguage: string) {
     // TODO: Implement translation
     throw new Error('Not implemented');
   }
 
-  static async compareTranslations(text1: string, text2: string, language: string) {
+  static async compareTranslations(_text1: string, _text2: string, _language: string) {
     // TODO: Implement translation comparison
     // Use AI to semantically compare two translations
     throw new Error('Not implemented');
   }
 
-  static async generateFeedback(studentText: string, correctText: string, accuracy: number) {
+  static async generateFeedback(_studentText: string, _correctText: string, _accuracy: number) {
     // TODO: Generate personalized feedback using AI
     throw new Error('Not implemented');
   }

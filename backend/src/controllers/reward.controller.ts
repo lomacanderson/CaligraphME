@@ -26,7 +26,7 @@ export class RewardController {
     }
   }
 
-  static async getAchievements(req: Request, res: Response) {
+  static async getAchievements(_req: Request, res: Response) {
     try {
       const achievements = await RewardService.getAchievements();
       res.json(achievements);
@@ -93,7 +93,7 @@ export class RewardController {
     }
   }
 
-  static async initializeAchievements(req: Request, res: Response) {
+  static async initializeAchievements(_req: Request, res: Response) {
     try {
       await RewardService.initializeAchievements();
       res.json({ message: 'Achievements initialized successfully' });
