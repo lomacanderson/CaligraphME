@@ -1,17 +1,24 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Story } from '@shared/types';
+import { Story, GradingResponse } from '@shared/types';
 import { storyApi } from '@/services/api/story.api';
+import { exerciseApi } from '@/services/api/exercise.api';
+import { gradingApi } from '@/services/api/grading.api';
 import { DrawingCanvas } from '@/components/canvas/DrawingCanvas';
+import { FeedbackDisplay } from '@/components/exercise/FeedbackDisplay';
+import { useUserStore } from '@/stores/userStore';
 import './StoryPage.css';
 
 export function StoryPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user, updatePoints } = useUserStore();
   const [story, setStory] = useState<Story | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentSentenceIndex, setCurrentSentenceIndex] = useState(0);
+  const [feedback, setFeedback] = useState<GradingResponse | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -35,9 +42,63 @@ export function StoryPage() {
     }
   };
 
-  const handleSubmit = (imageData: string) => {
-    console.log('Submitting drawing for sentence:', currentSentence.id);
-    // TODO: Send to grading API
+  const handleSubmit = async (imageData: string) => {
+    if (!story || !user) {
+      alert('Please complete user setup to submit your work.');
+      return;
+    }
+    
+    const currentSentence = story.sentences[currentSentenceIndex];
+    setIsSubmitting(true);
+    setFeedback(null);
+    
+    try {
+      // Step 1: Submit canvas and extract text (with placeholder OCR)
+      console.log('Submitting drawing for sentence:', currentSentence.id);
+      const submissionResult = await exerciseApi.submitCanvas(currentSentence.id, {
+        exerciseId: currentSentence.id,
+        canvasData: imageData,
+        format: 'png',
+        expectedText: currentSentence.textOriginal,
+        sourceLanguage: user.nativeLanguage,
+        targetLanguage: user.targetLanguage,
+      } as any);
+
+      
+      console.log('OCR extraction result:', submissionResult);
+      
+      // Step 2: Grade the submission
+      const gradingResult = await gradingApi.gradeSubmission({
+        submissionId: submissionResult.submissionId,
+        studentText: submissionResult.extractedText,
+        extractedText: submissionResult.extractedText, // For handwriting grader
+        expectedText: currentSentence.textOriginal,
+        sourceLanguage: user.nativeLanguage,
+        targetLanguage: user.targetLanguage,
+        canvasImage: imageData,
+        ocrConfidence: submissionResult.confidence,
+      } as any);
+      
+      console.log('Grading result:', gradingResult);
+      
+      // Display feedback
+      setFeedback(gradingResult);
+      
+      // Update user points
+      if (gradingResult.pointsEarned > 0) {
+        updatePoints(gradingResult.pointsEarned);
+      }
+      
+    } catch (error: any) {
+      console.error('Failed to submit and grade:', error);
+      alert('Failed to submit your work. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  
+  const handleNextSentence = () => {
+    setFeedback(null);
     
     // Move to next sentence
     if (currentSentenceIndex < story!.sentences.length - 1) {
@@ -126,18 +187,45 @@ export function StoryPage() {
         </div>
 
         <div className="practice-section">
-          <DrawingCanvas 
-            onSubmit={handleSubmit}
-            submitButtonText="Submit & Next →"
-          />
+          {!feedback ? (
+            <>
+              <DrawingCanvas 
+                onSubmit={handleSubmit}
+                submitButtonText={isSubmitting ? "Grading..." : "Submit & Grade"}
+              />
 
-          {currentSentenceIndex > 0 && (
-            <button 
-              className="btn-secondary previous-button"
-              onClick={() => setCurrentSentenceIndex(currentSentenceIndex - 1)}
-            >
-              ← Previous Sentence
-            </button>
+              {currentSentenceIndex > 0 && !isSubmitting && (
+                <button 
+                  className="btn-secondary previous-button"
+                  onClick={() => {
+                    setFeedback(null);
+                    setCurrentSentenceIndex(currentSentenceIndex - 1);
+                  }}
+                >
+                  ← Previous Sentence
+                </button>
+              )}
+            </>
+          ) : (
+            <>
+              <FeedbackDisplay feedback={feedback} />
+              
+              <div className="feedback-actions">
+                <button 
+                  className="btn-primary"
+                  onClick={handleNextSentence}
+                >
+                  {currentSentenceIndex < story.sentences.length - 1 ? 'Next Sentence →' : 'Complete Story 🎉'}
+                </button>
+                
+                <button 
+                  className="btn-secondary"
+                  onClick={() => setFeedback(null)}
+                >
+                  Try Again
+                </button>
+              </div>
+            </>
           )}
         </div>
       </div>

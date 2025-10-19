@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Layout } from './components/layout/Layout';
 import { HomePage } from './pages/HomePage';
@@ -6,10 +7,28 @@ import { StoryPage } from './pages/StoryPage';
 import { ExercisePage } from './pages/ExercisePage';
 import { WritingPage } from './pages/WritingPage';
 import { ProfilePage } from './pages/ProfilePage';
+import { UserSetupModal } from './components/user/UserSetupModal';
+import { useUserStore } from './stores/userStore';
 
 function App() {
+  const { user } = useUserStore();
+  const [showSetup, setShowSetup] = useState(false);
+
+  useEffect(() => {
+    // Check if user exists, if not show setup modal
+    if (!user) {
+      setShowSetup(true);
+    }
+  }, [user]);
+
+  const handleSetupComplete = () => {
+    setShowSetup(false);
+  };
+
   return (
     <Router>
+      {showSetup && <UserSetupModal onComplete={handleSetupComplete} />}
+      
       <Layout>
         <Routes>
           <Route path="/" element={<HomePage />} />

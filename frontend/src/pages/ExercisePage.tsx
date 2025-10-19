@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import DrawingCanvas from '@/components/canvas/DrawingCanvas';
+import { DrawingCanvas } from '@/components/canvas/DrawingCanvas';
 import { FeedbackDisplay } from '@/components/exercise/FeedbackDisplay';
 
 export function ExercisePage() {
@@ -9,15 +9,16 @@ export function ExercisePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [feedback, setFeedback] = useState<any>(null);
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (imageData: string) => {
     try {
       setIsSubmitting(true);
+      setCanvasData(imageData);
       // TODO: Implement submission
-      // 1. Get canvas data
-      // 2. Submit to API
-      // 3. Process OCR
-      // 4. Grade
-      // 5. Show feedback
+      // 1. Submit canvas to API
+      // 2. Process OCR
+      // 3. Grade
+      // 4. Show feedback
+      console.log('Canvas submitted:', imageData);
     } catch (error) {
       console.error('Failed to submit:', error);
     } finally {
@@ -30,18 +31,10 @@ export function ExercisePage() {
       <h1>Write the sentence</h1>
       <p className="instruction">Write: "The cat is sleeping"</p>
 
-      <DrawingCanvas/>
-
-      <div className="actions">
-        <button className="btn-secondary">Clear</button>
-        <button 
-          className="btn-primary" 
-          onClick={handleSubmit}
-          disabled={isSubmitting || !canvasData}
-        >
-          {isSubmitting ? 'Processing...' : 'Submit'}
-        </button>
-      </div>
+      <DrawingCanvas 
+        onSubmit={handleSubmit}
+        submitButtonText={isSubmitting ? 'Processing...' : 'Submit'}
+      />
 
       {feedback && <FeedbackDisplay feedback={feedback} />}
     </div>
