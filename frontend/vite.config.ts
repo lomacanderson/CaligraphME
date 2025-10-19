@@ -13,9 +13,11 @@ export default defineConfig({
   },
   server: {
     port: 5173,
+    host: true, // Allow external connections
+    allowedHosts: ['procoercion-metaphrastical-lucila.ngrok-free.dev'], // Allow all hosts including ngrok
     proxy: {
       '/api': {
-        target: 'http://localhost:3000',
+        target: 'http://localhost:5173',
         changeOrigin: true,
       },
     },
