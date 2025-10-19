@@ -22,6 +22,8 @@ export function StoryPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showLevelUp, setShowLevelUp] = useState(false);
   const [levelUpData, setLevelUpData] = useState<{ newLevel: string; totalPoints: number } | null>(null);
+  const [completedSentences, setCompletedSentences] = useState<Map<number, string>>(new Map());
+  const [currentSubmissionImage, setCurrentSubmissionImage] = useState<string | null>(null);
 
   useEffect(() => {
     if (id) {
@@ -68,6 +70,7 @@ export function StoryPage() {
     const currentSentence = story.sentences[currentSentenceIndex];
     setIsSubmitting(true);
     setFeedback(null);
+    setCurrentSubmissionImage(imageData); // Store the image for this submission
     
     try {
       console.log('📝 Submitting drawing for sentence:', currentSentence.id);
@@ -138,7 +141,13 @@ export function StoryPage() {
   };
   
   const handleNextSentence = () => {
+    // Save the current sentence's image before moving to next
+    if (currentSubmissionImage) {
+      setCompletedSentences(prev => new Map(prev).set(currentSentenceIndex, currentSubmissionImage));
+    }
+    
     setFeedback(null);
+    setCurrentSubmissionImage(null);
     
     // Move to next sentence
     if (currentSentenceIndex < story!.sentences.length - 1) {
@@ -254,18 +263,33 @@ export function StoryPage() {
           </div>
           
           <div className="story-text">
-            {story.sentences.map((sentence, index) => (
-              <span
-                key={sentence.id}
-                className={`story-sentence ${index === currentSentenceIndex ? 'current-sentence' : ''} ${index < currentSentenceIndex ? 'completed-sentence' : ''} ${sentence.audioUrl ? 'has-audio' : ''}`}
-                onClick={() => handleSentenceClick(index)}
-                title={sentence.audioUrl ? 'Click to hear pronunciation 🔊' : undefined}
-              >
-                {sentence.audioUrl && <span className="audio-icon">🔊 </span>}
-                {sentence.textTranslated}
-                {index < story.sentences.length - 1 ? ' ' : ''}
-              </span>
-            ))}
+            {story.sentences.map((sentence, index) => {
+              const isCompleted = completedSentences.has(index);
+              const imageData = completedSentences.get(index);
+              
+              return isCompleted && imageData ? (
+                <span key={sentence.id} className="story-sentence-image-wrapper">
+                  <img 
+                    src={imageData} 
+                    alt={`Your handwriting for: ${sentence.textTranslated}`}
+                    className="story-sentence-image"
+                    onClick={() => handleSentenceClick(index)}
+                    title="Click to hear pronunciation 🔊"
+                  />
+                </span>
+              ) : (
+                <span
+                  key={sentence.id}
+                  className={`story-sentence ${index === currentSentenceIndex ? 'current-sentence' : ''} ${index < currentSentenceIndex ? 'completed-sentence' : ''} ${sentence.audioUrl ? 'has-audio' : ''}`}
+                  onClick={() => handleSentenceClick(index)}
+                  title={sentence.audioUrl ? 'Click to hear pronunciation 🔊' : undefined}
+                >
+                  {sentence.audioUrl && <span className="audio-icon">🔊 </span>}
+                  {sentence.textTranslated}
+                  {index < story.sentences.length - 1 ? ' ' : ''}
+                </span>
+              );
+            })}
           </div>
         </div>
 
